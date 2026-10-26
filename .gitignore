@@ -4,4 +4,5 @@ __pycache__/
 Scripts/obj/
 output/
 *.3dmbak
+*.stlbak
 *.rhl
