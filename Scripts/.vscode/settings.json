@@ -1,0 +1,10 @@
+{
+  "python.analysis.extraPaths": [
+    "C:\\Users\\Oliver\\.rhinocode\\py39-rh8\\site-stubs",
+    "C:\\Users\\Oliver\\.rhinocode\\py39-rh8\\site-rhinopython",
+    "C:\\Users\\Oliver\\.rhinocode\\py39-rh8\\site-rhinoghpython",
+    "C:\\Users\\Oliver\\.rhinocode\\py39-rh8\\site-interop",
+    "C:\\Users\\Oliver\\.rhinocode\\py39-rh8\\site-envs\\default-0QyvRtE2"
+  ],
+  "python.defaultInterpreterPath": "C:\\Users\\Oliver\\.rhinocode\\py39-rh8\\python.exe"
+}
