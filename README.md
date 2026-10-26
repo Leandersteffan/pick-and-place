@@ -1,10 +1,10 @@
-# Printegrate on the Snapmaker U1
+# Pick and place
 
-A Rhino and Grasshopper designer for printing a part with traces and components already inside it. The printer builds a small tray, pauses so the traces and the part can be set in, then picks them up and prints them into the housing.
+Print an object that is already put together. A trace, an LED, a small circuit: the printer picks the parts up and places them while it prints, so the thing that comes off the bed is assembled, not just a plastic shape.
 
-This repository is that designer, pointed at a Snapmaker U1. The tool was written for a Prusa. The work here is the move onto the U1: one nozzle, OrcaSlicer instead of PrusaSlicer, the tray and the housing kept in the places they have in Rhino, and a nozzle that actually waits until it has cooled before it picks anything up.
+This repository is a Rhino and Grasshopper designer for that. You draw the housing and where the parts go. Slice writes one file. The printer builds a tray, pauses so the parts can be set in, then picks them up and prints them into the housing.
 
-The first part from this pipeline lights.
+The designer was written for a Prusa. This copy runs it on a Snapmaker U1: one nozzle, OrcaSlicer, the tray and the housing kept where they were drawn, and a nozzle that waits until it has cooled before it picks anything up. The first part from this copy lights.
 
 ## Open it
 
@@ -54,4 +54,4 @@ The U1 has printed a tray, paused, printed the housing, placed two traces and an
 
 ## Credit
 
-The designer is Oliver's. This repository is the version I am carrying onto the Snapmaker U1, as part of the HCI seminar at HPI.
+The designer is Oliver's. This copy is the one I am running on the Snapmaker U1, as part of the HCI seminar at HPI.
