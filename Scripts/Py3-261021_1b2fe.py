@@ -4,6 +4,7 @@ import shutil
 import re
 import sys
 import zipfile
+import json
 import Rhino
 import System
 
@@ -413,6 +414,254 @@ CONFIG = {
     }
 }
 
+def _jsonable(value):
+    if value is None or isinstance(value, (bool, int, float, str)):
+        return value
+    try:
+        return float(value)
+    except Exception:
+        return str(value)
+
+
+def _plain_dict(value):
+    if not value:
+        return {}
+    pairs = None
+    try:
+        pairs = list(value.items())
+    except Exception:
+        try:
+            pairs = [(key, value[key]) for key in value.Keys]
+        except Exception:
+            return {}
+    return {str(key): _jsonable(item) for key, item in pairs}
+
+
+def _xyz(point):
+    if point is None:
+        return None
+    try:
+        return {"x": float(point.X), "y": float(point.Y), "z": float(point.Z)}
+    except Exception:
+        return None
+
+
+def _flatten_operations(value):
+    if value is None:
+        return []
+    if hasattr(value, "PickPt") or hasattr(value, "PlacePt"):
+        return [value]
+    try:
+        if hasattr(value, "Branches"):
+            items = []
+            for branch in value.Branches:
+                items.extend(list(branch))
+            return items
+    except Exception:
+        pass
+    try:
+        return [item for item in value]
+    except TypeError:
+        return [value]
+
+
+def _part_type(embeddable, use_trace_braid):
+    type_name = ""
+    if hasattr(embeddable, "GetType"):
+        try:
+            type_name = str(embeddable.GetType().Name).lower()
+        except Exception:
+            type_name = ""
+    if type_name == "print":
+        return "print"
+    if hasattr(embeddable, "Radius"):
+        return "plug"
+    if hasattr(embeddable, "Geometry"):
+        return "pcb"
+    return "trace_braid" if use_trace_braid else "trace_cloth"
+
+
+def _point_records(items, with_type):
+    records = []
+    if not items:
+        return records
+    try:
+        sequence = list(items)
+    except Exception:
+        return records
+    for item in sequence:
+        pos = _xyz(getattr(item, "Position", item))
+        if pos is None:
+            continue
+        record = dict(pos)
+        if with_type:
+            try:
+                record["type"] = int(item.Type)
+            except Exception:
+                record["type"] = 0
+        overrides = _plain_dict(getattr(item, "Overrides", None))
+        if overrides:
+            record["overrides"] = overrides
+        records.append(record)
+    return records
+
+
+def _part_size(embeddable):
+    geo = getattr(embeddable, "Geometry", None)
+    if geo is None:
+        return None
+    try:
+        box = geo.GetBoundingBox(True)
+    except Exception:
+        return None
+    size = {
+        "x": float(box.Max.X - box.Min.X),
+        "y": float(box.Max.Y - box.Min.Y),
+        "z": float(box.Max.Z - box.Min.Z),
+    }
+    if size["x"] <= 0 or size["y"] <= 0:
+        return None
+    return size
+
+
+def _bbox_center(embeddable):
+    geo = getattr(embeddable, "Geometry", None)
+    if geo is None:
+        return None
+    try:
+        box = geo.GetBoundingBox(True)
+    except Exception:
+        return None
+    return {
+        "x": float((box.Max.X + box.Min.X) / 2.0),
+        "y": float((box.Max.Y + box.Min.Y) / 2.0),
+        "z": float((box.Max.Z + box.Min.Z) / 2.0),
+    }
+
+
+def _bbox_min(embeddable):
+    geo = getattr(embeddable, "Geometry", None)
+    if geo is None:
+        return None
+    try:
+        box = geo.GetBoundingBox(True)
+    except Exception:
+        return None
+    return {
+        "x": float(box.Min.X),
+        "y": float(box.Min.Y),
+        "z": float(box.Min.Z),
+    }
+
+
+def _write_part_stl(meshes, path):
+    """Write the component mesh Slice will subtract from its tray pocket."""
+    with open(path, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write("solid part\n")
+        for mesh in meshes:
+            copy = mesh.DuplicateMesh()
+            copy.UnifyNormals()
+            copy.Faces.ConvertQuadsToTriangles()
+            for index in range(copy.Faces.Count):
+                face = copy.Faces[index]
+                a = copy.Vertices[face.A]
+                b = copy.Vertices[face.B]
+                c = copy.Vertices[face.C]
+                ux, uy, uz = b.X - a.X, b.Y - a.Y, b.Z - a.Z
+                vx, vy, vz = c.X - a.X, c.Y - a.Y, c.Z - a.Z
+                handle.write("  facet normal {0} {1} {2}\n".format(
+                    uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx
+                ))
+                handle.write("    outer loop\n")
+                for point in (a, b, c):
+                    handle.write("      vertex {0} {1} {2}\n".format(point.X, point.Y, point.Z))
+                handle.write("    endloop\n")
+                handle.write("  endfacet\n")
+        handle.write("endsolid part\n")
+
+
+def _part_record(embeddable, use_trace_braid):
+    place = _xyz(getattr(embeddable, "PlacePt", None))
+    if place is None:
+        print("A part has no place point. It was left out of the spec.")
+        return None
+    record = {
+        "type": _part_type(embeddable, use_trace_braid),
+        "place": place,
+    }
+    pick = _xyz(getattr(embeddable, "PickPt", None))
+    if pick is not None:
+        record["pick"] = pick
+    layer = getattr(embeddable, "PauseLayer", None)
+    if layer is not None:
+        try:
+            record["pause_layer"] = int(layer)
+        except Exception:
+            pass
+    size = _part_size(embeddable)
+    if size is not None:
+        record["size"] = size
+        box_center = _bbox_center(embeddable)
+        if box_center is not None:
+            record["bbox_center"] = box_center
+        box_min = _bbox_min(embeddable)
+        if box_min is not None:
+            record["bbox_min"] = box_min
+    length = getattr(embeddable, "Length", None)
+    width = getattr(embeddable, "Width", None)
+    if length is not None and width is not None:
+        record["length"] = float(length)
+        record["width"] = float(width)
+        height = getattr(embeddable, "Height", None)
+        if height is not None:
+            record["height"] = float(height)
+        horizontal = getattr(embeddable, "IsHorizontal", None)
+        if horizontal is not None:
+            record["horizontal"] = bool(horizontal)
+        line = getattr(embeddable, "ModelLine", None)
+        if line is not None:
+            record["line_from"] = _xyz(line.From)
+            record["line_to"] = _xyz(line.To)
+    elif getattr(embeddable, "Radius", None) is not None:
+        record["radius"] = float(embeddable.Radius)
+        height = getattr(embeddable, "Height", None)
+        if height is not None:
+            record["height"] = float(height)
+    tray_offset = getattr(embeddable, "TrayOffset", None)
+    if tray_offset is not None:
+        record["tray_offset"] = float(tray_offset)
+    overrides = _plain_dict(getattr(embeddable, "Overrides", None))
+    if overrides:
+        record["overrides"] = overrides
+    name = getattr(embeddable, "Name", None)
+    if name:
+        record["name"] = str(name)
+    tamps = _point_records(getattr(embeddable, "TampingPts", None), True)
+    if tamps:
+        record["tamps"] = tamps
+    holes = _point_records(getattr(embeddable, "PrinjectionPoints", None), False)
+    if holes:
+        record["prinjection"] = holes
+    return record
+
+def _outside_python():
+    """The system Python that has the tray libraries. Rhino's own Python does not."""
+    local = os.environ.get("LOCALAPPDATA", "")
+    for version in ("Python310", "Python311", "Python312", "Python313"):
+        path = os.path.join(local, "Programs", "Python", version, "python.exe")
+        if os.path.isfile(path):
+            return [path]
+    return ["py", "-3"]
+
+
+def _outside_env():
+    """Drop Rhino's Python settings so the outside program can start."""
+    env = os.environ.copy()
+    for key in ("PYTHONHOME", "PYTHONPATH", "PYTHONNOUSERSITE", "PYTHONSTARTUP", "PYTHONSAFEPATH"):
+        env.pop(key, None)
+    return env
+
+
 def process_print():
     """Main processing function for pick-and-place printing."""
     global SLICER_PATH, MODULE_PATH
@@ -591,655 +840,88 @@ def process_print():
         print("No print body. Move the box to layer Default as one closed solid. PLA is for parts you place, not for the printed box.")
         return
 
-    if export_mesh_to_3mf(tray, tray_3mf_path) and export_meshes_to_3mf(model_meshes, model_3mf_path):
-        print("3MF Files Exported Successfully.")
-    else:
-        print("Failed to export 3MF files.")
+    spec_dir = os.path.join(output_dir, "spec")
+    os.makedirs(spec_dir)
+    housing_3mf = os.path.join(spec_dir, "housing.3mf")
+    if not export_meshes_to_3mf(model_meshes, housing_3mf):
+        print("Failed to export the housing.")
         return
+    print("Housing exported.")
 
-    # --- 3. SLICING STAGE ---
-    def orca_profile_paths():
-        install = os.path.dirname(SLICER_PATH)
-        machine = os.path.join(install, "resources", "profiles", "Snapmaker", "machine", "Snapmaker U1 (0.4 nozzle).json")
-        process = os.path.join(project_dir, "resources", "u1", "process.json")
-        filament = os.path.join(project_dir, "resources", "u1", "filament.json")
-        missing = [path for path in (machine, process, filament) if not os.path.isfile(path)]
-        if missing:
-            print("Missing U1 slicer profile: " + missing[0])
-            return None
-        return machine, process, filament
-
-    def run_prusa(input_file, output_file):
-        cmd = [
-            SLICER_PATH, "-s", "-g",
-            "--load", config_path,
-            "-o", output_file,
-            input_file
-        ]
-        return subprocess.run(cmd, capture_output=True, text=True).stdout
-
-    def run_orca(input_file, output_file):
-        profiles = orca_profile_paths()
-        if profiles is None:
-            return ""
-        machine, process, filament = profiles
-        orca_dir = os.path.join(output_dir, os.path.splitext(os.path.basename(output_file))[0] + "_orca")
-        if os.path.exists(orca_dir):
-            shutil.rmtree(orca_dir)
-        os.makedirs(orca_dir)
-        cmd = [
-            SLICER_PATH,
-            "--load-settings", machine,
-            "--load-settings", process,
-            "--load-filaments", filament,
-            "--outputdir", orca_dir,
-            "--slice", "0",
-            input_file,
-        ]
-        result = subprocess.run(cmd, capture_output=True, text=True)
-        if result.stdout:
-            print(result.stdout)
-        if result.returncode != 0:
-            print(result.stderr)
-            print("OrcaSlicer failed on " + os.path.basename(input_file))
-            return ""
-        produced = [
-            os.path.join(orca_dir, name)
-            for name in os.listdir(orca_dir)
-            if name.lower().endswith(".gcode")
-        ]
-        if not produced:
-            print("OrcaSlicer wrote no gcode for " + os.path.basename(input_file))
-            return ""
-        shutil.copyfile(produced[0], output_file)
-        return result.stdout
-
-    def gcode_has_layers(path):
-        if not os.path.isfile(path):
-            return False
-        with open(path, "r", encoding="utf-8", errors="replace") as handle:
-            return ";LAYER_CHANGE" in handle.read()
-
-    print("Slicing Setup...")
-    if use_orca:
-        run_orca(tray_3mf_path, setup_gcode_path)
-    else:
-        run_prusa(tray_3mf_path, setup_gcode_path)
-    print("Slicing Part...")
-    if use_orca:
-        run_orca(model_3mf_path, part_gcode_path)
-    else:
-        run_prusa(model_3mf_path, part_gcode_path)
-    if not gcode_has_layers(setup_gcode_path) or not gcode_has_layers(part_gcode_path):
-        print("Slicing did not produce layer changes. Stopped before writing combined_output.gcode.")
-        return
-
-    tray_shift = (0.0, 0.0)
-    model_shift = (0.0, 0.0)
-    if use_orca:
-        tray_shift = _slicer_shift(tray_3mf_path, setup_gcode_path)
-        model_shift = _slicer_shift(model_3mf_path, part_gcode_path)
-        if tray_shift is None or model_shift is None:
-            print("Could not match the sliced position to the model. Stopped before writing combined_output.gcode.")
+    def _export_extra(file_path, options_name):
+        try:
+            options_type = getattr(Rhino.FileIO, options_name)
+            opts = options_type()
+        except Exception as error:
+            print("Skipped " + os.path.basename(file_path) + ": " + str(error))
             return
-        tray_bounds = _mesh_bounds(tray_3mf_path)
-        model_bounds = _mesh_bounds(model_3mf_path)
-        if tray_bounds is None or model_bounds is None:
-            print("Could not read the model size. Stopped before writing combined_output.gcode.")
-            return
-        bed_shift = _shared_bed_shift((tray_bounds, model_bounds))
-        if bed_shift is None:
-            print("Tray and box do not fit on the bed together. Move them in Rhino, then Slice again.")
-            return
-        _shift_layer_moves(
-            setup_gcode_path,
-            (-tray_shift[0] + bed_shift[0], -tray_shift[1] + bed_shift[1]),
-        )
-        _shift_layer_moves(
-            part_gcode_path,
-            (-model_shift[0] + bed_shift[0], -model_shift[1] + bed_shift[1]),
-        )
-        _rewrite_bed_mesh(setup_gcode_path, (tray_bounds, model_bounds), bed_shift)
-        tray_shift = bed_shift
-        model_shift = bed_shift
-        if abs(bed_shift[0]) < 0.05 and abs(bed_shift[1]) < 0.05:
-            print("Tray and box keep their Rhino positions.")
-        else:
-            print(
-                "Tray and box keep their Rhino gap. Both were nudged by {0:+.1f}, {1:+.1f} mm so the tray stays on the bed."
-                .format(bed_shift[0], bed_shift[1])
-            )
-
-    # --- 4. G-CODE GENERATION FUNCTIONS ---
-    def merge_config_with_overrides(base_config, embeddable_overrides):
-        """
-        Merge embeddable overrides with base config, handling type conversions.
-        Non-prinjection_ keys override base config directly.
-        Returns a merged config dict.
-        """
-        merged = dict(base_config)
-        
-        if not embeddable_overrides:
-            return merged
-        
-        for key, value in embeddable_overrides.items():
-            if key.startswith('prinjection_'):
-                # Handle prinjection overrides
-                prinjection_key = key[12:]  # Remove 'prinjection_' prefix (12 chars, not 11!)
-                if 'prinjection' not in merged:
-                    merged['prinjection'] = {}
-                else:
-                    merged['prinjection'] = dict(merged['prinjection'])
-                
-                # Try to convert to appropriate type
-                try:
-                    if prinjection_key in merged['prinjection']:
-                        orig_val = merged['prinjection'][prinjection_key]
-                        if isinstance(orig_val, bool):
-                            merged['prinjection'][prinjection_key] = value.lower() in ('true', '1', 'yes')
-                        elif isinstance(orig_val, int):
-                            merged['prinjection'][prinjection_key] = int(float(value))
-                        elif isinstance(orig_val, float):
-                            merged['prinjection'][prinjection_key] = float(value)
-                        else:
-                            merged['prinjection'][prinjection_key] = value
-                    else:
-                        # Try to infer type
-                        try:
-                            merged['prinjection'][prinjection_key] = float(value)
-                        except ValueError:
-                            merged['prinjection'][prinjection_key] = value
-                except Exception as e:
-                    print(f"Warning: Could not parse prinjection override {key}={value}: {e}")
-            else:
-                # Handle regular config overrides
-                try:
-                    if key in merged:
-                        orig_val = merged[key]
-                        if isinstance(orig_val, bool):
-                            merged[key] = value.lower() in ('true', '1', 'yes')
-                        elif isinstance(orig_val, int):
-                            merged[key] = int(float(value))
-                        elif isinstance(orig_val, float):
-                            merged[key] = float(value)
-                        else:
-                            merged[key] = value
-                    else:
-                        # Try to infer type
-                        try:
-                            merged[key] = float(value)
-                        except ValueError:
-                            merged[key] = value
-                except Exception as e:
-                    print(f"Warning: Could not parse override {key}={value}: {e}")
-        
-        return merged
-
-    def perform_nozzle_wipe(writer, location, retract_amount=2.5):
-        """Perform nozzle wipe sequence at specified location.
-        
-        Args:
-            writer: GcodeWriter instance
-            location: Tuple of (x, y, z) coordinates for wipe location
-            retract_amount: Amount to retract before wipe movements (mm), default 2.5mm
-        """
-        writer.comment("Nozzle Wipe Sequence")
-        wx, wy, wz = location
-        
-        # Move to wipe station
-        writer.move_to(x=wx, y=wy, z=wz+10, feedrate=24000)
-        writer.move_to(z=wz, feedrate=24000)
-        writer.extrude(amount=10.0, feedrate=2400)
-        writer.write_line("G4 P500")  # Dwell for 500ms
-        
-        # Retract before wipe movements
-        writer.retract(amount=retract_amount)
-        
-        # Back and forth wipes
-        for _ in range(1):
-            writer.move_to(x=wx + 30, feedrate=12000)
-            writer.move_to(x=wx, feedrate=12000)
-        writer.move_to(x=wx + 30, feedrate=12000)
-        
-        # Clear and stay near wipe station; caller controls return/unretract timing.
-        writer.move_to(z=wz+10, feedrate=24000)
-
-    def perform_pick_and_place(writer, embeddable, embeddable_type):
-        """
-        Execute pick and place operation for an embeddable element.
-        
-        Args:
-            writer: GcodeWriter instance
-            embeddable: The embeddable object (TraceElement, Plug, or PCB) from C#
-            embeddable_type: 'trace_braid', 'trace_cloth', 'plug', 'pcb', or 'print'
-        """
-        cfg = CONFIG[embeddable_type]
-        
-        # Merge embeddable-level overrides
-        if hasattr(embeddable, 'Overrides') and embeddable.Overrides:
-            cfg = merge_config_with_overrides(cfg, embeddable.Overrides)
-        
-        writer.comment(f"=== Pick and Place: {embeddable_type.upper()} ===")
-
-        pick_pt = _moved(embeddable.PickPt, tray_shift)
-        place_pt = _moved(embeddable.PlacePt, model_shift)
-        tamp_pts = embeddable.TampingPts or []
-
-        # Lift nozzle
-        writer.move_to(z=writer.state.current_z + 10, feedrate=cfg['z_lift_feedrate'])
-
-        # Turn off part cooling fan to prevent blowing parts away
-        writer.write_line("M107")
-
-        # Wipe nozzle and retract
-        perform_nozzle_wipe(writer, wipe_location, retract_amount)
-
-        # === PICK SEQUENCE ===
-        writer.comment("Pick Sequence")
-        writer.move_to(x=pick_pt.X, y=pick_pt.Y, feedrate=cfg['travel_feedrate'])
-        writer.move_to(z=pick_pt.Z + 10, feedrate=cfg['z_lift_feedrate'])
-        writer.unretract(amount=retract_amount)
-        
-        # Pre-extrude step if configured
-        if 'pick_pre_extrude_amount' in cfg and cfg['pick_pre_extrude_amount'] > 0:
-            writer.move_to(z=pick_pt.Z, feedrate=cfg['z_lift_feedrate'])
-            writer.extrude(amount=cfg['pick_pre_extrude_amount'], feedrate=cfg['pick_extrude_feedrate'])
-            writer.move_to(z=pick_pt.Z + cfg['pick_z_offset'], feedrate=cfg['z_lift_feedrate'])
-        else:
-            writer.move_to(z=pick_pt.Z + cfg['pick_z_offset'], feedrate=cfg['z_lift_feedrate'])
-        
-        writer.extrude(amount=cfg['pick_extrude_amount'], feedrate=cfg['pick_extrude_feedrate'])
-        
-        writer.comment("Cooling to grab...")
-        writer.set_extruder_temp(cfg['pick_cool_temp'], wait=True)
-        pick_dwell_time = cfg.get('pick_dwell_time', 0)
-        if pick_dwell_time > 0:
-            writer.write_line(f"G4 P{pick_dwell_time}")
-
-        # === PLACE SEQUENCE ===
-        writer.comment("Place Sequence")
-        writer.move_to(z=place_pt.Z + 10, feedrate=cfg['z_lift_feedrate'])
-        writer.move_to(x=place_pt.X, y=place_pt.Y, feedrate=cfg['travel_feedrate'])
-        
-        if PLACE_HOVER_DWELL_TIME_MS > 0:
-            writer.comment(f"Hover dwell before placing into cavity ({PLACE_HOVER_DWELL_TIME_MS} ms)")
-            writer.write_line(f"G4 P{PLACE_HOVER_DWELL_TIME_MS}")
-        
-        # Pre-heat and place behavior
-        if embeddable_type == 'pcb':
-            # PCB-style: place cold, then release at wipe station
-            writer.move_to(z=place_pt.Z + cfg['place_preheat_height'], feedrate=cfg['z_lift_feedrate'])
-            writer.move_to(z=place_pt.Z + cfg['place_z_offset'], feedrate=cfg['place_feedrate'])
-            writer.extrude(-1, feedrate=2000)
-            writer.write_line(f"G4 P{cfg['place_dwell_time']}")
-            
-            # Move aside while still cold
-            writer.comment("Moving aside while cold...")
-            writer.move_to(x=place_pt.X + cfg.get('place_side_offset', 1.0), feedrate=cfg['travel_feedrate'])
-            writer.extrude(-2.5, feedrate=2000)
-            writer.move_to(z=place_pt.Z + 10, feedrate=cfg['z_lift_feedrate'])
-            
-            # Travel to wipe station, then heat to release
-            wx, wy, wz = wipe_location
-            writer.comment("Traveling to wipe station to release...")
-            writer.move_to(x=wx, y=wy, z=wz + 10, feedrate=cfg['travel_feedrate'])
-            writer.move_to(z=wz, feedrate=cfg['z_lift_feedrate'])
-            writer.set_extruder_temp(cfg['place_heat_temp'], wait=True)
-        elif embeddable_type == 'print':
-            # Print-style: place cold, heat to print temperature, then shear move to release.
-            writer.move_to(z=place_pt.Z + cfg['place_preheat_height'], feedrate=cfg['z_lift_feedrate'])
-            writer.move_to(z=place_pt.Z + cfg['place_z_offset'], feedrate=cfg['place_feedrate'])
-            writer.extrude(-1, feedrate=2000)
-            writer.comment("Heating to release...")
-            writer.set_extruder_temp(cfg['place_heat_temp'], wait=True)
-        elif cfg['place_preheat_height'] > 0:
-            # Plug/PCB-style: pre-heat above the place point, then press down
-            writer.move_to(z=place_pt.Z + cfg['place_preheat_height'], feedrate=cfg['z_lift_feedrate'])
-            writer.comment("Preheating before placement...")
-            writer.set_extruder_temp(cfg['place_heat_temp'], wait=True)
-            writer.move_to(z=place_pt.Z + cfg['place_z_offset'], feedrate=cfg['place_feedrate'])
-            writer.extrude(-1, feedrate=2000)
-        else:
-            # Trace-style: pre-heat at the final place position
-            writer.move_to(z=place_pt.Z + cfg['place_z_offset'], feedrate=cfg['place_feedrate'])
-            writer.comment("Heating to release...")
-            writer.set_extruder_temp(cfg['place_heat_temp'], wait=True)
-        
-        writer.write_line(f"G4 P{cfg['place_dwell_time']}")
-        
-        # Print-specific: perform a shear move to release the part
-        if embeddable_type == 'print' and 'place_side_offset' in cfg:
-            writer.comment("Shear moving aside to release...")
-            writer.move_to(z=place_pt.Z, feedrate=cfg.get('post_place_lift_feedrate', cfg['z_lift_feedrate']))
-            writer.move_to(x=place_pt.X + cfg['place_side_offset'], feedrate=cfg['travel_feedrate'])
-
-        # Prinjection sequence for PCB
-        if embeddable_type == 'pcb':
-            if hasattr(embeddable, 'PrinjectionPoints') and embeddable.PrinjectionPoints and len(list(embeddable.PrinjectionPoints)) > 0:
-                writer.comment("Starting Prinjection Sequence for PCB holes")
-                
-                # Perform an interim wipe to clear oozing after heating up
-                perform_nozzle_wipe(writer, wipe_location, retract_amount)
-                
-                prinjection_cfg = cfg['prinjection']
-                
-                # Turn cooling fan back on during prinjection if desired (optional, maybe leave it off)
-                writer.write_line("M106")
-                
-                # Unretract after wipe. Note we map the main parameter first to neutralise the manual system retract, 
-                # then shift to local prinjection cfg length for inter-hole stringing mitigation.
-                writer.unretract(amount=retract_amount)
-                writer.retract(amount=prinjection_cfg['retract_amount'])
-                
-                is_first_hole = True
-                
-                for hole_idx, pt in enumerate(list(embeddable.PrinjectionPoints)):
-                    # Extract position from PrinjectionPoint object
-                    hole_pos = _moved(pt.Position, model_shift)
-                    
-                    # Merge point-level overrides (takes precedence over embeddable-level prinjection config)
-                    pt_prinjection_cfg = dict(prinjection_cfg)
-                    
-                    # DEBUG: Check if Overrides exist
-                    has_overrides = hasattr(pt, 'Overrides') and pt.Overrides
-                    overrides_count = len(pt.Overrides) if has_overrides else 0
-                    print(f"[DEBUG] Hole {hole_idx}: hasattr(pt, 'Overrides')={hasattr(pt, 'Overrides')}, overrides_count={overrides_count}")
-                    
-                    if has_overrides:
-                        print(f"[DEBUG]   Overrides dict keys: {list(pt.Overrides.keys())}")
-                        for key, value in pt.Overrides.items():
-                            print(f"[DEBUG]   Processing override: {key}={value}")
-                            if key.startswith('prinjection_'):
-                                prinjection_key = key[12:]  # Remove 'prinjection_' prefix (12 chars, not 11!)
-                                print(f"[DEBUG]     Stripped key: {prinjection_key}")
-                                try:
-                                    if prinjection_key in pt_prinjection_cfg:
-                                        orig_val = pt_prinjection_cfg[prinjection_key]
-                                        print(f"[DEBUG]     Found in cfg, orig_val={orig_val} (type={type(orig_val).__name__})")
-                                        if isinstance(orig_val, bool):
-                                            pt_prinjection_cfg[prinjection_key] = value.lower() in ('true', '1', 'yes')
-                                        elif isinstance(orig_val, int):
-                                            pt_prinjection_cfg[prinjection_key] = int(float(value))
-                                        elif isinstance(orig_val, float):
-                                            pt_prinjection_cfg[prinjection_key] = float(value)
-                                        else:
-                                            pt_prinjection_cfg[prinjection_key] = value
-                                        print(f"[DEBUG]     Updated to: {pt_prinjection_cfg[prinjection_key]}")
-                                    else:
-                                        print(f"[DEBUG]     NOT found in cfg")
-                                        try:
-                                            pt_prinjection_cfg[prinjection_key] = float(value)
-                                        except ValueError:
-                                            pt_prinjection_cfg[prinjection_key] = value
-                                except Exception as e:
-                                    print(f"Warning: Could not parse point prinjection override {key}={value}: {e}")
-                    
-                    print(f"[DEBUG]   Final extrude_amount for hole {hole_idx}: {pt_prinjection_cfg['extrude_amount']}")
-                    
-                    # Hover over the hole
-                    hover_z = hole_pos.Z + pt_prinjection_cfg['hover_z_offset']
-                    target_z = hole_pos.Z + pt_prinjection_cfg['inject_z_offset']
-                    
-                    # Move to hover position
-                    writer.move_to(x=hole_pos.X, y=hole_pos.Y, feedrate=cfg['travel_feedrate'])
-                    writer.move_to(z=hover_z, feedrate=cfg['z_lift_feedrate'])
-                    
-                    # Lower to injection point at a normal speed instead of the slow place speed
-                    writer.move_to(z=target_z, feedrate=cfg['z_lift_feedrate'])
-                    
-                    # Unretract from previous hole or initial wipe if retract_amount from config matches what was pulled
-                    unretract_amt = pt_prinjection_cfg['retract_amount']
-                    if is_first_hole and 'initial_extra_prime' in pt_prinjection_cfg:
-                        unretract_amt += pt_prinjection_cfg['initial_extra_prime']
-                        is_first_hole = False
-                        
-                    writer.unretract(amount=unretract_amt)
-                    
-                    # Inject filament
-                    writer.extrude(amount=pt_prinjection_cfg['extrude_amount'], feedrate=pt_prinjection_cfg['extrude_feedrate'])
-                    
-                    # Retract and lift
-                    writer.retract(amount=pt_prinjection_cfg['retract_amount'])
-                    
-                    # If we injected below the swipe offset, lift to the swipe offset first
-                    if pt_prinjection_cfg['inject_z_offset'] < pt_prinjection_cfg['swipe_z_offset']:
-                        writer.move_to(z=hole_pos.Z + pt_prinjection_cfg['swipe_z_offset'], feedrate=cfg['place_feedrate'])
-
-                    # Do a little side swipe to break the string
-                    writer.comment("Side swipe to break stringing")
-                    writer.move_to(x=hole_pos.X + 1.5, y=hole_pos.Y + 1.5, feedrate=cfg['travel_feedrate'])
-                    
-                    # Quick lift to hover z
-                    writer.move_to(z=hover_z, feedrate=cfg['z_lift_feedrate'])
-                    
-                # Turn cooling fan back off if we turned it on
-                writer.write_line("M107")
-
-        elif embeddable_type == 'print' and 'place_side_offset' in cfg:
-            # Print-specific: lift, move to wipe station, and cool to wipe temp
-            writer.extrude(-2.5, feedrate=2000)
-            writer.move_to(z=place_pt.Z + 10, feedrate=cfg.get('post_place_lift_feedrate', cfg['z_lift_feedrate']))
-            
-            wx, wy, wz = wipe_location
-            writer.comment("Moving to wipe location before adjusting temp...")
-            writer.move_to(x=wx, y=wy, feedrate=cfg['travel_feedrate'])
-            writer.comment(f"Cooling down to wipe temp ({cfg.get('wipe_temp', 210)})...")
-            writer.set_extruder_temp(cfg.get('wipe_temp', 210), wait=True)
-
-        else:
-            writer.extrude(-2.5, feedrate=2000)
-            writer.move_to(z=place_pt.Z + 2, feedrate=cfg['z_lift_feedrate'])
-
-        # === TAMPING SEQUENCE ===
-        if tamp_pts and len(tamp_pts) > 0:
-            writer.comment(f"Tamping {len(tamp_pts)} Points")
-            tamp_cfg = CONFIG['tamping']
-            
-            for tamp_pt in tamp_pts:
-                # Access TampingPoint properties from C#
-                position = _moved(tamp_pt.Position, model_shift)
-                tamp_type = int(tamp_pt.Type)
-                
-                # Get type-specific parameters from Python CONFIG
-                type_cfg = dict(tamp_cfg[tamp_type])
-                
-                # Merge point-level overrides (takes precedence over embeddable-level)
-                if hasattr(tamp_pt, 'Overrides') and tamp_pt.Overrides:
-                    for key, value in tamp_pt.Overrides.items():
-                        # Skip prinjection_ prefix for tamping points
-                        if not key.startswith('prinjection_'):
-                            try:
-                                if key in type_cfg:
-                                    orig_val = type_cfg[key]
-                                    if isinstance(orig_val, bool):
-                                        type_cfg[key] = value.lower() in ('true', '1', 'yes')
-                                    elif isinstance(orig_val, int):
-                                        type_cfg[key] = int(float(value))
-                                    elif isinstance(orig_val, float):
-                                        type_cfg[key] = float(value)
-                                    else:
-                                        type_cfg[key] = value
-                                else:
-                                    try:
-                                        type_cfg[key] = float(value)
-                                    except ValueError:
-                                        type_cfg[key] = value
-                            except Exception as e:
-                                print(f"Warning: Could not parse tamping point override {key}={value}: {e}")
-                
-                depth_offset = type_cfg['depth_offset']
-                
-                # Perform tamping motion
-                writer.move_to(x=position.X, y=position.Y, feedrate=tamp_cfg['travel_feedrate'])
-                writer.move_to(z=position.Z - depth_offset, feedrate=type_cfg['feedrate'])
-                writer.write_line(f"G4 P{type_cfg['dwell_time']}")
-                writer.move_to(z=position.Z + tamp_cfg['lift_height'], feedrate=tamp_cfg['lift_feedrate'])
-
-        # Turn part cooling fan back on
-        writer.write_line("M106")
-
-    # --- 5. FINAL G-CODE ASSEMBLY ---
-    with GcodeWriter(final_output_path) as writer:
-        if use_orca:
-            writer.firmware = "klipper"
-
-        # The U1 file keeps Orca's own startup (home, mesh, nozzle clean, prime line).
-        # Prusa files replace that startup with the saved preamble.
-        if use_orca:
-            with open(setup_gcode_path, "r", encoding="utf-8", errors="replace") as f:
-                lines = f.readlines()
-            end_idx = next((i for i, line in enumerate(lines) if line.strip() == "PRINT_END"), len(lines))
-            for line in lines[:end_idx]:
-                writer.write_line(line.rstrip())
-        else:
-            with open(os.path.join(snippet_dir, f"{file_prefix}preamble.gcode"), "r") as f:
-                for line in f:
-                    writer.write_line(line.rstrip())
-            with open(setup_gcode_path, "r") as f:
-                lines = f.readlines()
-                start_idx = next((i for i, l in enumerate(lines) if ";LAYER_CHANGE" in l), 0)
-                for line in lines[start_idx:]:
-                    writer.write_line(line.rstrip())
-
-        last_setup_z = writer.state.current_z
-        writer.pause()
-        post_pause_position = writer.state.position
-        perform_nozzle_wipe(writer, wipe_location, retract_amount)
-        writer.move_to(x=post_pause_position.x, y=post_pause_position.y, z=post_pause_position.z, feedrate=24000)
-        writer.unretract(amount=retract_amount)
-
-        # Process part G-code with dynamic pick and place insertion
-        writer.state.current_layer = 0
-        z_has_been_adjusted = False
-        part_start_prime_done = False
-        completed_embeddable_indices = set()
-
-        def get_embeddable_type(embeddable):
-            """Resolve embeddable type from CLR object shape/name."""
-            type_name = ""
-            if hasattr(embeddable, 'GetType'):
-                try:
-                    type_name = str(embeddable.GetType().Name).lower()
-                except Exception:
-                    type_name = ""
-
-            if type_name == 'print':
-                return 'print'
-            if hasattr(embeddable, 'Radius'):
-                return 'plug'
-            if hasattr(embeddable, 'Geometry'):
-                return 'pcb'
-            return 'trace_braid' if use_trace_braid else 'trace_cloth'
-
-        def process_layer_embeddables(layer_embeddables, context_label):
-            """Run pick-and-place for a list of (index, embeddable) pairs."""
-            if not layer_embeddables:
+        doc = Rhino.RhinoDoc.CreateHeadless(None)
+        try:
+            combined = Rhino.Geometry.Mesh()
+            for mesh in model_meshes:
+                combined.Append(mesh)
+            if combined.Vertices.Count == 0:
                 return
+            doc.Objects.AddMesh(combined)
+            if doc.Export(file_path, opts.ToDictionary()):
+                print("Wrote " + file_path)
+        except Exception as error:
+            print("Skipped " + os.path.basename(file_path) + ": " + str(error))
+        finally:
+            doc.Dispose()
 
-            writer.comment(f"=== {context_label} ===")
+    _export_extra(os.path.join(spec_dir, "housing.stl"), "FileStlWriteOptions")
+    _export_extra(os.path.join(spec_dir, "housing.step"), "FileStpWriteOptions")
 
-            # Save current position and pressure advance before pick and place operations
-            saved_position = writer.state.position
-            saved_pa = writer.get_pressure_advance()
+    parts = []
+    for item in _flatten_operations(operations):
+        record = _part_record(item, use_trace_braid)
+        if record is None:
+            continue
+        if record["type"] in ("pcb", "print"):
+            meshes = _geometry_to_meshes(getattr(item, "Geometry", None))
+            if not meshes:
+                print("A component has no solid mesh, so its tray pocket cannot be cut from the real part.")
+                return
+            mesh_name = "part-{0}.stl".format(len(parts))
+            _write_part_stl(meshes, os.path.join(spec_dir, mesh_name))
+            record["mesh"] = mesh_name
+            print("Exported " + mesh_name)
+        parts.append(record)
+    if not parts:
+        print("No traces or components to place. The spec was not written.")
+        return
+    spec = {
+        "version": 1,
+        "printer": printer_name,
+        "use_trace_braid": use_trace_braid,
+        "housing": "housing.3mf",
+        "tray": "generated",
+        "tray_spacing": 3.0,
+        "tray_origin": {"x": 0.0, "y": 0.0, "z": 0.0},
+        "parts": parts,
+    }
+    spec_path = os.path.join(spec_dir, "spec.json")
+    with open(spec_path, "w") as handle:
+        json.dump(spec, handle, indent=2)
+    print("Wrote " + spec_path)
+    print("Rhino exported the housing and the part list. The tray and the slicer run outside Grasshopper.")
 
-            # Disable pressure advance for pick and place operations
-            writer.set_pressure_advance(extruder=saved_pa[0], value=0.0)
-
-            # Process all embeddables for this insertion point
-            for i, embeddable in layer_embeddables:
-                embeddable_type = get_embeddable_type(embeddable)
-
-                writer.comment(f"Placing {embeddable_type.upper()} #{i+1}")
-                perform_pick_and_place(writer, embeddable, embeddable_type)
-                completed_embeddable_indices.add(i)
-
-            # After all placements, wipe and return to saved position
-            perform_nozzle_wipe(writer, wipe_location, retract_amount)
-            writer.move_to(x=saved_position.x, y=saved_position.y, z=saved_position.z + 10, feedrate=6000)
-            writer.unretract(amount=retract_amount)
-
-            # Restore pressure advance
-            writer.set_pressure_advance(extruder=saved_pa[0], value=saved_pa[1], time_range=saved_pa[2])
-
-        with open(part_gcode_path, "r", encoding="utf-8", errors="replace") as f:
-            part_lines = f.readlines()
-            start_idx = next((i for i, l in enumerate(part_lines) if ";LAYER_CHANGE" in l), 0)
-
-            # Find where post-print footer begins (after last printable moves).
-            end_section_idx = next(
-                (i for i in range(start_idx, len(part_lines)) if part_lines[i].rstrip().startswith(";TYPE:Custom")),
-                None
-            )
-
-            # Determine the number of printable layers from layer-change markers.
-            max_layer_in_part = sum(1 for l in part_lines[start_idx:] if l.rstrip().startswith(";LAYER_CHANGE"))
-            print(f"Detected {max_layer_in_part} printable layers in part.gcode")
-            if end_section_idx is not None:
-                print(f"Late-placement anchor found at line {end_section_idx + 1} (;TYPE:Custom)")
-            
-            for line_idx in range(start_idx, len(part_lines)):
-                line = part_lines[line_idx]
-                clean_line = line.rstrip()
-
-                # Insert any remaining operations right before the end/custom section.
-                if end_section_idx is not None and line_idx == end_section_idx:
-                    pending_embeddables = [
-                        (i, embeddable) for i, embeddable in enumerate(operations)
-                        if i not in completed_embeddable_indices
-                    ]
-                    if pending_embeddables:
-                        print(
-                            f"Inserting {len(pending_embeddables)} late operation(s) after last print layer "
-                            f"(current layer={writer.state.current_layer}, max layer={max_layer_in_part})."
-                        )
-                        process_layer_embeddables(pending_embeddables, "Late Placement After Last Print Move")
-                
-                # Check for layer change to trigger pick and place
-                if clean_line.startswith(";LAYER_CHANGE"):
-                    writer.write_line(clean_line)
-                    
-                    # Find all embeddables scheduled for this layer
-                    layer_embeddables = [
-                        (i, embeddable) for i, embeddable in enumerate(operations)
-                        if writer.state.current_layer == embeddable.PauseLayer and i not in completed_embeddable_indices
-                    ]
-                    
-                    if layer_embeddables:
-                        process_layer_embeddables(layer_embeddables, f"Layer {writer.state.current_layer} Placement")
-                    
-                    continue
-
-                # Adjust the very first Z-move to be relative to the previous setup height
-                if not z_has_been_adjusted and "G1" in clean_line and "Z" in clean_line:
-                    adjusted_z = last_setup_z + PART_START_Z_HOP
-                    clean_line = re.sub(r'Z[\d\.]+', f'Z{adjusted_z:.1f}', clean_line)
-                    z_has_been_adjusted = True
-                
-                writer.write_line(clean_line)
-
-                # One-time extra prime at part start to recover from transition ooze.
-                if (not part_start_prime_done
-                    and z_has_been_adjusted
-                    and re.match(r'^G1\s+E\.?8\b', clean_line)):
-                    writer.comment("Part-start extra prime")
-                    writer.write_line(f"G1 E{PART_START_EXTRA_PRIME:.2f} F1500")
-                    part_start_prime_done = True
-
-        # Fallback: if no explicit end marker was found, append any still-pending operations now.
-        final_pending_embeddables = [
-            (i, embeddable) for i, embeddable in enumerate(operations)
-            if i not in completed_embeddable_indices
-        ]
-        if final_pending_embeddables:
-            print(f"Appending {len(final_pending_embeddables)} fallback late operation(s) at end of part stream.")
-            process_layer_embeddables(final_pending_embeddables, "Fallback Late Placement")
-
-        # Prusa files add their own end block. The U1 file already ends with PRINT_END.
-        if not use_orca:
-            with open(os.path.join(snippet_dir, f"{file_prefix}end.gcode"), "r") as f:
-                for line in f:
-                    writer.write_line(line.rstrip())
-
+    command = _outside_python() + ["-m", "pipeline", spec_dir, "--project", project_dir]
+    log_path = os.path.join(output_dir, "slice_log.txt")
+    with open(log_path, "w", encoding="utf-8") as log:
+        log.write(" ".join(command) + "\n")
+        log.flush()
+        completed = subprocess.run(
+            command,
+            cwd=MODULE_PATH,
+            env=_outside_env(),
+            stdout=log,
+            stderr=subprocess.STDOUT,
+        )
+    if completed.returncode != 0:
+        print("The outside slicer failed. See " + log_path)
+        return
     print("Process Complete. Final G-Code saved in output folder.")
 
 
