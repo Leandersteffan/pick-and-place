@@ -1,0 +1,192 @@
+{
+  "lines": 10176,
+  "moves": 5940,
+  "segments": [
+    {
+      "index": 1,
+      "firstLine": 1,
+      "lastLine": 3817,
+      "firstMove": 0,
+      "lastMove": 1984,
+      "moveCount": 1985,
+      "extrudeZMin": 0.2,
+      "extrudeZMax": 1.4,
+      "layerCount": 7
+    },
+    {
+      "index": 2,
+      "firstLine": 3818,
+      "lastLine": 10176,
+      "firstMove": 1985,
+      "lastMove": 5939,
+      "moveCount": 3955,
+      "extrudeZMin": 0.2,
+      "extrudeZMax": 5,
+      "layerCount": 25
+    }
+  ],
+  "eventCounts": {
+    "dwell": 15,
+    "fan": 31,
+    "pause": 1,
+    "pick_seq": 3,
+    "place_seq": 3,
+    "placement_group": 2,
+    "placing": 3,
+    "pnp_header": 3,
+    "prinjection": 1,
+    "skipped_extrusion": 2,
+    "tamping": 2,
+    "temperature": 17,
+    "temperature_wait": 6,
+    "wipe": 7
+  },
+  "markers": [
+    {
+      "kind": "pause",
+      "line": 3817,
+      "label": "PAUSE"
+    },
+    {
+      "kind": "wipe",
+      "line": 3818,
+      "label": "Nozzle Wipe Sequence"
+    },
+    {
+      "kind": "placement_group",
+      "line": 6574,
+      "label": "Layer 11 Placement"
+    },
+    {
+      "kind": "placing",
+      "line": 6576,
+      "label": "Placing PCB #3"
+    },
+    {
+      "kind": "pnp_header",
+      "line": 6577,
+      "label": "Pick and Place: PCB"
+    },
+    {
+      "kind": "wipe",
+      "line": 6580,
+      "label": "Nozzle Wipe Sequence"
+    },
+    {
+      "kind": "pick_seq",
+      "line": 6590,
+      "label": "Pick Sequence"
+    },
+    {
+      "kind": "place_seq",
+      "line": 6600,
+      "label": "Place Sequence"
+    },
+    {
+      "kind": "prinjection",
+      "line": 6618,
+      "label": "Starting Prinjection Sequence for PCB holes"
+    },
+    {
+      "kind": "wipe",
+      "line": 6619,
+      "label": "Nozzle Wipe Sequence"
+    },
+    {
+      "kind": "wipe",
+      "line": 6654,
+      "label": "Nozzle Wipe Sequence"
+    },
+    {
+      "kind": "placement_group",
+      "line": 6854,
+      "label": "Layer 12 Placement"
+    },
+    {
+      "kind": "placing",
+      "line": 6856,
+      "label": "Placing TRACE_CLOTH #1"
+    },
+    {
+      "kind": "pnp_header",
+      "line": 6857,
+      "label": "Pick and Place: TRACE_CLOTH"
+    },
+    {
+      "kind": "wipe",
+      "line": 6860,
+      "label": "Nozzle Wipe Sequence"
+    },
+    {
+      "kind": "pick_seq",
+      "line": 6870,
+      "label": "Pick Sequence"
+    },
+    {
+      "kind": "place_seq",
+      "line": 6882,
+      "label": "Place Sequence"
+    },
+    {
+      "kind": "tamping",
+      "line": 6893,
+      "label": "Tamping 2 Points"
+    },
+    {
+      "kind": "placing",
+      "line": 6903,
+      "label": "Placing TRACE_CLOTH #2"
+    },
+    {
+      "kind": "pnp_header",
+      "line": 6904,
+      "label": "Pick and Place: TRACE_CLOTH"
+    },
+    {
+      "kind": "wipe",
+      "line": 6907,
+      "label": "Nozzle Wipe Sequence"
+    },
+    {
+      "kind": "pick_seq",
+      "line": 6917,
+      "label": "Pick Sequence"
+    },
+    {
+      "kind": "place_seq",
+      "line": 6929,
+      "label": "Place Sequence"
+    },
+    {
+      "kind": "tamping",
+      "line": 6940,
+      "label": "Tamping 2 Points"
+    },
+    {
+      "kind": "wipe",
+      "line": 6950,
+      "label": "Nozzle Wipe Sequence"
+    }
+  ],
+  "stats": {
+    "lines": 10176,
+    "arcs": 160,
+    "helicalLifts": 32,
+    "timestampLine": 2
+  },
+  "unhandled": {
+    "count": 0,
+    "first": []
+  },
+  "moveCounts": {
+    "extrude": 4412,
+    "travel": 949,
+    "pick": 11,
+    "place": 16,
+    "tamp": 12,
+    "prinjection": 12,
+    "wipe": 42,
+    "z_hop": 486
+  },
+  "totalTime": 531
+}

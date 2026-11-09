@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "printer": "snapmaker u1 (0.4 nozzle)",
+  "use_trace_braid": true,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "print",
+      "place": {
+        "x": 153.5854528353,
+        "y": -6.901,
+        "z": 30.5432
+      },
+      "pick": {
+        "x": 103.69779174903364,
+        "y": 130.28885,
+        "z": 13.2219225329
+      },
+      "pause_layer": 302,
+      "size": {
+        "x": 47.37,
+        "y": 45.31,
+        "z": 16.1
+      },
+      "bbox_center": {
+        "x": 74.4198,
+        "y": 168.848784,
+        "z": 17.66
+      },
+      "bbox_min": {
+        "x": 50.7348,
+        "y": 146.193784,
+        "z": 9.61
+      },
+      "tray_offset": 2.0,
+      "mesh": "part-0.stl",
+      "tamps": [
+        {
+          "x": -11.0464,
+          "y": 6.9,
+          "z": 18.22163950652633,
+          "type": 2
+        }
+      ]
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 75.6,
+        "y": 54.492,
+        "z": 33.9324
+      },
+      "pick": {
+        "x": 170.09814201274358,
+        "y": 168.7134310742,
+        "z": 0.29
+      },
+      "pause_layer": 87,
+      "length": 87.5139,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 75.6,
+        "y": 10.73505,
+        "z": 33.9324
+      },
+      "line_to": {
+        "x": 75.6,
+        "y": 98.24895,
+        "z": 33.9324
+      }
+    }
+  ]
+}

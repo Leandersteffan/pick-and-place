@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "printer": "prusa xl",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 9.954625,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 193.893,
+        "y": 4.2,
+        "z": 26.443451
+      },
+      "pick": {
+        "x": 127.2789187827,
+        "y": 166.21174861401335,
+        "z": 1.166042
+      },
+      "pause_layer": 147,
+      "length": 42.6,
+      "width": 2.8,
+      "height": 1.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 172.593,
+        "y": 4.2,
+        "z": 26.443451
+      },
+      "line_to": {
+        "x": 215.193,
+        "y": 4.2,
+        "z": 26.443451
+      },
+      "tamps": [
+        {
+          "x": 145.823,
+          "y": 51.95,
+          "z": 2.049579404,
+          "type": 3,
+          "overrides": {
+            "tray_rotation": 156.326,
+            "fan_speed": "0.8",
+            "retract_length": false
+          }
+        },
+        {
+          "x": 33.686,
+          "y": 252.494336,
+          "z": 19.5489660098,
+          "type": 7
+        }
+      ],
+      "overrides": {
+        "retract_length": false,
+        "fan_speed": null,
+        "wall_loops": 166
+      }
+    },
+    {
+      "type": "plug",
+      "place": {
+        "x": 208.7716149157631,
+        "y": 214.23,
+        "z": 10.71
+      },
+      "pick": {
+        "x": 68.5141382843,
+        "y": 108.687,
+        "z": 3.401814972383932
+      },
+      "pause_layer": 26,
+      "radius": 2.195,
+      "height": 6.32
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 119.1,
+        "y": 119.149,
+        "z": 15.7
+      },
+      "pick": {
+        "x": 115.962333,
+        "y": 163.39475512513863,
+        "z": -0.410176
+      },
+      "pause_layer": 269,
+      "length": 35.34,
+      "width": 4.2953346406,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 119.1,
+        "y": 101.479,
+        "z": 15.7
+      },
+      "line_to": {
+        "x": 119.1,
+        "y": 136.819,
+        "z": 15.7
+      }
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 95.7886940486641,
+        "y": -5.2889848222,
+        "z": 33.4
+      },
+      "pick": {
+        "x": 142.2,
+        "y": 181.22,
+        "z": 2.8452859239
+      },
+      "pause_layer": 60,
+      "length": 45.36,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 73.108694,
+        "y": -5.2889848222,
+        "z": 33.4
+      },
+      "line_to": {
+        "x": 118.468694,
+        "y": -5.2889848222,
+        "z": 33.4
+      },
+      "overrides": {
+        "wall_loops": 29
+      }
+    }
+  ]
+}

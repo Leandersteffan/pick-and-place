@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "printer": "xl",
+  "use_trace_braid": true,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 9.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "plug",
+      "place": {
+        "x": -3.9988,
+        "y": 12.527136438773042,
+        "z": 27.111
+      },
+      "pick": {
+        "x": 193.376,
+        "y": 4.42,
+        "z": 6.982722
+      },
+      "pause_layer": 119,
+      "radius": 0.912,
+      "height": 4.941767
+    }
+  ]
+}

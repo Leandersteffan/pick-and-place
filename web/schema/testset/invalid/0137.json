@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "printer": "xl",
+  "use_trace_braid": false,
+  "housing": "housing.stl",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 196.1099216138,
+        "y": 103.14,
+        "z": 27.7
+      },
+      "pick": {
+        "x": 191.183,
+        "y": 172.111,
+        "z": 3.615490763356624
+      },
+      "pause_layer": 283,
+      "length": 33.49,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 179.364922,
+        "y": 103.14,
+        "z": true
+      },
+      "line_to": {
+        "x": 212.854922,
+        "y": 103.14,
+        "z": 27.7
+      },
+      "tamps": [],
+      "name": "trace B",
+      "slot": {
+        "x0": 64.5755556547,
+        "y0": 99.761,
+        "x1": 103.955556,
+        "y1": 121.721
+      }
+    }
+  ]
+}

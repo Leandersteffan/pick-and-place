@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "printer": "prusa mini",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "print",
+      "place": {
+        "x": 230.2409,
+        "y": 136.128,
+        "z": 13.8937
+      },
+      "pause_layer": 311,
+      "size": {
+        "x": 48.0,
+        "y": 49.8,
+        "z": 2.2838
+      },
+      "bbox_center": {
+        "x": 274.639,
+        "y": 210.87,
+        "z": 19.65
+      },
+      "bbox_min": {
+        "x": 250.639,
+        "y": 185.97,
+        "z": 18.5081
+      },
+      "tray_offset": 2.9,
+      "mesh": "part-0.stl",
+      "name": "insert 1"
+    },
+    {
+      "type": "print",
+      "place": {
+        "x": 214.6949,
+        "y": 104.338,
+        "z": 27.6474
+      },
+      "pause_layer": 262,
+      "size": {
+        "x": 4.152,
+        "y": 48.8,
+        "z": 5.300553
+      },
+      "bbox_center": {
+        "x": 169.887,
+        "y": 188.9678,
+        "z": 5.0842453422
+      },
+      "bbox_min": {
+        "x": 167.811,
+        "y": 164.5678,
+        "z": 2.433969
+      },
+      "tray_offset": 2.0,
+      "mesh": "part-1.stl"
+    }
+  ]
+}

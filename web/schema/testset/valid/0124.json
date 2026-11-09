@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "printer": "xl",
+  "use_trace_braid": true,
+  "housing": "housing.stl",
+  "tray": "generated",
+  "tray_spacing": 4.346465,
+  "tray_origin": {
+    "x": 121.6080304868,
+    "y": 87.758,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "pcb",
+      "place": {
+        "x": 243.6,
+        "y": 162.2563322815,
+        "z": 39.0776
+      },
+      "pause_layer": 51,
+      "size": {
+        "x": 52.490095157705944,
+        "y": 56.4,
+        "z": 7.8
+      },
+      "bbox_center": {
+        "x": 151.5497318988263,
+        "y": 181.2275,
+        "z": 17.571
+      },
+      "bbox_min": {
+        "x": 125.304684,
+        "y": 153.0275,
+        "z": 13.671
+      },
+      "tray_offset": 2.0,
+      "mesh": "part-0.stl"
+    }
+  ]
+}

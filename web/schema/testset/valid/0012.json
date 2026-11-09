@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "printer": "prusa xl",
+  "use_trace_braid": false,
+  "housing": "housing.stl",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "plug",
+      "place": {
+        "x": 85.089,
+        "y": 72.481,
+        "z": 14.564688813470452
+      },
+      "pick": {
+        "x": 115.0,
+        "y": 34.8,
+        "z": 8.569
+      },
+      "pause_layer": 207,
+      "radius": 4.998,
+      "height": 2.6795,
+      "overrides": {
+        "tray_rotation": 147.5,
+        "fan_speed": 159
+      },
+      "slot": {
+        "x0": 168.1601066409,
+        "y0": 44.973809,
+        "x1": 203.972007,
+        "y1": 57.493809
+      },
+      "slot_shape": "circle"
+    }
+  ]
+}

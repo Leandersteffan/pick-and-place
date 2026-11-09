@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "printer": "snapmaker u1",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 8.731,
+  "tray_origin": {
+    "x": 217.27,
+    "y": 275.72,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 267.2675,
+        "y": 197.139126,
+        "z": 22.382913
+      },
+      "pick": {
+        "x": 68.7,
+        "y": 170.28,
+        "z": 0.79
+      },
+      "pause_layer": 369,
+      "length": 88.2328,
+      "width": 2.8,
+      "height": 0.3,
+      "horizontal": true,
+      "line_from": {
+        "x": 223.1511,
+        "y": 197.139126,
+        "z": 22.382913
+      },
+      "line_to": {
+        "x": 311.3839,
+        "y": 197.139126,
+        "z": 22.382913
+      },
+      "tamps": [
+        {
+          "x": 89.123,
+          "y": 29.654404052242484,
+          "z": 28.8113,
+          "type": 2,
+          "overrides": {
+            "tray_rotation": 142.6960272797,
+            "note": false,
+            "fan_speed": null,
+            "nozzle_temperature": true
+          }
+        },
+        {
+          "x": 150.2946,
+          "y": -10.9590700644,
+          "z": 18.6623426262,
+          "type": 0
+        },
+        {
+          "x": 14.8,
+          "y": 245.2110577506,
+          "z": 19.7832,
+          "type": 0
+        }
+      ],
+      "slot": {
+        "x0": 11.701998,
+        "y0": 89.427772,
+        "x1": 13.101998,
+        "y1": 106.734772
+      }
+    }
+  ]
+}

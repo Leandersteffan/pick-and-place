@@ -1,0 +1,10 @@
+C:\Users\lenni\AppData\Local\Programs\Python\Python310\python.exe -m pipeline C:\A\HPI\5. Semester\HCI 26 27\Getting logik out of Grasshoper\Designer\Designer\output\spec --project C:\A\HPI\5. Semester\HCI 26 27\Getting logik out of Grasshoper\Designer\Designer
+Spec: C:\A\HPI\5. Semester\HCI 26 27\Getting logik out of Grasshoper\Designer\Designer\output\spec\spec.json
+OrcaSlicer: C:\Program Files\OrcaSlicer\orca-slicer.exe
+Tray written to C:\A\HPI\5. Semester\HCI 26 27\Getting logik out of Grasshoper\Designer\Designer\output\spec\tray.stl
+Slicing tray...
+Slicing housing...
+Moved the housing 22.6 mm up so it clears the tray by 10 mm.
+Shared bed nudge +0.5, +1.0 mm.
+Detected 25 printable layers in part.gcode
+Wrote C:\A\HPI\5. Semester\HCI 26 27\Getting logik out of Grasshoper\Designer\Designer\output\combined_output.gcode

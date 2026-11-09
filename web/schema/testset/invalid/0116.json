@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "printer": "mini",
+  "use_trace_braid": true,
+  "housing": "housing.stl",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 71.2269,
+    "y": 211.139033,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "print",
+      "place": {
+        "x": 223.2539,
+        "y": 42.2426,
+        "z": 21.688121
+      },
+      "pause_layer": 308,
+      "size": {
+        "x": 57.363345,
+        "y": 48.86418,
+        "z": 19.865
+      },
+      "bbox_center": {
+        "x": 68.921,
+        "y": 277.4338,
+        "z": 6.497204299275392
+      },
+      "tray_offset": 3.09,
+      "mesh": "part-0.stl",
+      "slot": {
+        "x0": 2.251,
+        "y0": 54.814,
+        "x1": 4.287384,
+        "y1": 74.754
+      },
+      "pocket": {
+        "x0": 111.9,
+        "y0": 35.441930154304316,
+        "x1": 151.7273,
+        "y1": 74.63193
+      },
+      "pocket_depth": 2.2
+    }
+  ]
+}

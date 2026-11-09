@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "printer": "snapmaker u1 (0.4 nozzle)",
+  "use_trace_braid": true,
+  "housing": "housing.stl",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "plug",
+      "place": {
+        "x": 122.07,
+        "y": 136.7376,
+        "z": 22.1
+      },
+      "pick": {
+        "x": 10.98,
+        "y": 158.5849,
+        "z": 1.462776
+      },
+      "pause_layer": 6,
+      "radius": 1.375,
+      "height": 4.218801,
+      "slot": {
+        "x0": 153.7,
+        "y0": 50.02,
+        "x1": 195.4075,
+        "y1": 64.02
+      },
+      "slot_shape": "circle"
+    },
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 95.2,
+        "y": 177.356,
+        "z": 21.0331692384,
+        "X": {}
+      },
+      "pick": {
+        "x": 34.09,
+        "y": 141.816105,
+        "z": 2.95
+      },
+      "pause_layer": 368,
+      "length": 44.0673249488,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 95.2,
+        "y": 155.322338,
+        "z": 21.0331692384
+      },
+      "line_to": {
+        "x": 95.2,
+        "y": 199.389662,
+        "z": 21.0331692384
+      },
+      "tamps": [],
+      "overrides": {
+        "wall_loops": "fast",
+        "first_layer_speed": "fast",
+        "retract_length": 220.662284
+      },
+      "name": ""
+    }
+  ]
+}

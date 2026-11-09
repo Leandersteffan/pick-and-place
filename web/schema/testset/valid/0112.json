@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "printer": "snapmaker u1 (0.4 nozzle)",
+  "use_trace_braid": true,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 9.1,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "print",
+      "place": {
+        "x": -10.7,
+        "y": 174.336409,
+        "z": 38.78
+      },
+      "pick": {
+        "x": 105.934717,
+        "y": 122.18986829562834,
+        "z": 11.62
+      },
+      "pause_layer": 341,
+      "size": {
+        "x": 11.5,
+        "y": 20.24,
+        "z": 7.596495
+      },
+      "bbox_center": {
+        "x": 9.02987867513891,
+        "y": 251.2254345738,
+        "z": 8.2715483622
+      },
+      "bbox_min": {
+        "x": 3.279879,
+        "y": 241.105435,
+        "z": 4.473301
+      },
+      "tray_offset": 2.0,
+      "mesh": "part-0.stl",
+      "name": "LED"
+    }
+  ]
+}

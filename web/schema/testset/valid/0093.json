@@ -1,0 +1,217 @@
+{
+  "version": 1,
+  "printer": "snapmaker u1",
+  "use_trace_braid": true,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.804,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "pcb",
+      "place": {
+        "x": 76.6558295630023,
+        "y": -19.6,
+        "z": 2.5
+      },
+      "pause_layer": 316,
+      "size": {
+        "x": 3.8415,
+        "y": 44.513802,
+        "z": 11.4343
+      },
+      "bbox_center": {
+        "x": 162.0,
+        "y": 254.0356,
+        "z": 12.6202180654
+      },
+      "bbox_min": {
+        "x": 160.07925,
+        "y": 231.778699,
+        "z": 6.903068
+      },
+      "tray_offset": 2.0,
+      "mesh": "part-0.stl",
+      "overrides": {
+        "tray_rotation": "90",
+        "nozzle_temperature": true,
+        "retract_length": false
+      }
+    },
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 241.298,
+        "y": 110.8157,
+        "z": 13.21
+      },
+      "pick": {
+        "x": 171.6408,
+        "y": 3.1250231784,
+        "z": 0.023958
+      },
+      "pause_layer": 115,
+      "length": 43.09,
+      "width": 1.9,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 241.298,
+        "y": 89.2707,
+        "z": 13.21
+      },
+      "line_to": {
+        "x": 241.298,
+        "y": 132.3607,
+        "z": 13.21
+      },
+      "name": "trace A"
+    },
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 267.058866,
+        "y": 245.8852751788628,
+        "z": 4.683826306053112
+      },
+      "pick": {
+        "x": 90.23750126439847,
+        "y": 70.3504,
+        "z": 0.814
+      },
+      "pause_layer": 137,
+      "length": 33.482,
+      "width": 2.8,
+      "height": 1.1,
+      "horizontal": false,
+      "line_from": {
+        "x": 267.058866,
+        "y": 229.144275,
+        "z": 4.683826306053112
+      },
+      "line_to": {
+        "x": 267.058866,
+        "y": 262.626275,
+        "z": 4.683826306053112
+      },
+      "tamps": []
+    },
+    {
+      "type": "print",
+      "place": {
+        "x": 154.5644,
+        "y": 42.08,
+        "z": 28.51
+      },
+      "pause_layer": 389,
+      "size": {
+        "x": 1.147500127032054,
+        "y": 51.762917,
+        "z": 3.7336
+      },
+      "bbox_center": {
+        "x": 39.95,
+        "y": 92.8279873355,
+        "z": 10.9
+      },
+      "bbox_min": {
+        "x": 39.37625,
+        "y": 66.946529,
+        "z": 9.0332
+      },
+      "tray_offset": 2.0,
+      "mesh": "part-3.stl",
+      "overrides": {
+        "fan_speed": null,
+        "retract_length": "210",
+        "wall_loops": 186
+      }
+    },
+    {
+      "type": "pcb",
+      "place": {
+        "x": 88.6,
+        "y": 56.2,
+        "z": 38.3950028296
+      },
+      "pick": {
+        "x": 12.909380554928006,
+        "y": 183.0586,
+        "z": 4.24
+      },
+      "pause_layer": 101,
+      "size": {
+        "x": 46.74,
+        "y": 35.0223769759,
+        "z": 14.644
+      },
+      "bbox_center": {
+        "x": 223.1973140662004,
+        "y": 48.5,
+        "z": 19.036071385733738
+      },
+      "bbox_min": {
+        "x": 199.827314,
+        "y": 30.988812,
+        "z": 11.714071
+      },
+      "tray_offset": 2.0,
+      "prinjection": [],
+      "mesh": "part-4.stl",
+      "name": "trace B"
+    },
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 77.9569,
+        "y": 119.284,
+        "z": 24.43
+      },
+      "pause_layer": 301,
+      "length": 62.3728461365,
+      "width": 1.69516,
+      "height": 0.979159587883761,
+      "horizontal": true,
+      "line_from": {
+        "x": 46.770477,
+        "y": 119.284,
+        "z": 24.43
+      },
+      "line_to": {
+        "x": 109.143323,
+        "y": 119.284,
+        "z": 24.43
+      },
+      "tamps": [],
+      "name": "LED"
+    },
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 220.51319259498587,
+        "y": 64.697,
+        "z": 5.849665345882018
+      },
+      "pause_layer": 66,
+      "length": 41.107,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 199.959693,
+        "y": 64.697,
+        "z": 5.849665345882018
+      },
+      "line_to": {
+        "x": 241.066693,
+        "y": 64.697,
+        "z": 5.849665345882018
+      },
+      "name": "LED"
+    }
+  ]
+}

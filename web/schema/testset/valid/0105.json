@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "printer": "snapmaker u1",
+  "use_trace_braid": false,
+  "housing": "housing.stl",
+  "tray": "generated",
+  "tray_spacing": 2.540818982257327,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "pcb",
+      "place": {
+        "x": 267.229674600257,
+        "y": 68.926,
+        "z": 20.9
+      },
+      "pick": {
+        "x": 133.791317,
+        "y": 71.03900526534683,
+        "z": 15.54
+      },
+      "pause_layer": 400,
+      "size": {
+        "x": 24.0,
+        "y": 17.912004,
+        "z": 17.327663803417074
+      },
+      "bbox_center": {
+        "x": 207.11,
+        "y": 50.036522,
+        "z": 5.5826859041
+      },
+      "bbox_min": {
+        "x": 195.11,
+        "y": 41.08052,
+        "z": -3.081146
+      },
+      "tray_offset": 2.0,
+      "mesh": "part-0.stl",
+      "overrides": {
+        "fan_speed": true,
+        "nozzle_temperature": null
+      }
+    }
+  ]
+}

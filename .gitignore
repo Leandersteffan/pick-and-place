@@ -2,7 +2,11 @@
 __pycache__/
 *.pyc
 Scripts/obj/
-output/
 *.3dmbak
 *.stlbak
 *.rhl
+web/**/node_modules/
+web/**/dist/
+web/server/.tmp/
+.pytest_cache/
+.hypothesis/

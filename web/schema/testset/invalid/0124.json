@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "printer": "prusa mini",
+  "use_trace_braid": true,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 153.3,
+    "y": 159.0987,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "pcb ",
+      "place": {
+        "x": 236.1484,
+        "y": 255.8,
+        "z": 19.5767
+      },
+      "pick": {
+        "x": 135.5324,
+        "y": 124.4859734984,
+        "z": 0.101145
+      },
+      "pause_layer": 173,
+      "radius": 4.852,
+      "height": 3.4008965795
+    }
+  ]
+}

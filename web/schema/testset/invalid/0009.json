@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "printer": "snapmaker u1",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 5.9540273255,
+  "tray_origin": {
+    "x": 64.33391302536015,
+    "y": 215.17106233417738,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "pcb",
+      "place": {
+        "x": 34.4754602562,
+        "y": -14.337446754987608,
+        "z": 29.56
+      },
+      "pause_layer": 200,
+      "length": 56.539,
+      "width": 1.69,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 6.20596,
+        "y": -14.337446754987608,
+        "z": 29.56
+      },
+      "line_to": {
+        "x": 62.74496,
+        "y": -14.337446754987608,
+        "z": 29.56
+      }
+    },
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 43.327505,
+        "y": 117.4871413094,
+        "z": 24.4328
+      },
+      "pick": {
+        "x": 89.1,
+        "y": 117.255,
+        "z": 3.197798570931522
+      },
+      "pause_layer": 305,
+      "length": 7.647673,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 43.327505,
+        "y": 113.663304,
+        "z": 24.4328
+      },
+      "line_to": {
+        "x": 43.327505,
+        "y": 121.310978,
+        "z": 24.4328
+      }
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "version": 1,
+  "printer": "mini",
+  "use_trace_braid": false,
+  "housing": "housing.stl",
+  "tray": "generated",
+  "tray_spacing": 1.5,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "print",
+      "place": {
+        "x": 58.69,
+        "y": 135.045,
+        "z": 5.8743
+      },
+      "pick": {
+        "x": 113.5524,
+        "y": 88.518,
+        "z": 11.21
+      },
+      "pause_layer": 86,
+      "size": {
+        "x": 3.9,
+        "y": 19.700818,
+        "z": 1.7
+      },
+      "bbox_center": {
+        "x": 95.5,
+        "y": -4.931,
+        "z": 19.8
+      },
+      "bbox_min": {
+        "x": 93.55,
+        "y": -14.781409,
+        "z": 18.95
+      },
+      "tray_offset": 4.2153,
+      "mesh": "part-0.stl"
+    },
+    {
+      "type": "print",
+      "place": {
+        "x": 185.7569633051,
+        "y": -15.4157,
+        "z": 33.946
+      },
+      "pause_layer": null,
+      "size": {
+        "x": 21.348,
+        "y": 46.5134820198,
+        "z": 7.456559582213457
+      },
+      "bbox_center": {
+        "x": 240.998317,
+        "y": 234.0888911292411,
+        "z": 16.786869
+      },
+      "bbox_min": {
+        "x": 230.324317,
+        "y": 210.83215,
+        "z": 13.058589
+      },
+      "tray_offset": 2.0,
+      "mesh": "part-1.stl"
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 68.9,
+        "y": 105.6,
+        "z": 15.151133
+      },
+      "pick": {
+        "x": 18.217952659008297,
+        "y": 24.695942874718078,
+        "z": -0.3997216951456
+      },
+      "pause_layer": 111,
+      "length": 56.11661712218894,
+      "width": 3.2382,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 68.9,
+        "y": 77.541691,
+        "z": 15.151133
+      },
+      "line_to": {
+        "x": 68.9,
+        "y": 133.658309,
+        "z": 15.151133
+      },
+      "tamps": [
+        {
+          "x": 57.566,
+          "y": 82.31897741675684,
+          "z": 15.0404694926,
+          "type": 0
+        },
+        {
+          "x": -15.9042516127,
+          "y": 193.98,
+          "z": 9.814,
+          "type": 3,
+          "overrides": {
+            "tray_rotation": "180",
+            "first_layer_speed": 144,
+            "nozzle_temperature": 162
+          }
+        }
+      ],
+      "overrides": {
+        "tray_rotation": "-90",
+        "wall_loops": 233
+      }
+    },
+    {
+      "type": "pcb",
+      "place": {
+        "x": 121.059334,
+        "y": 141.644523,
+        "z": 19.797483301
+      },
+      "pause_layer": 263,
+      "size": {
+        "x": 41.23856503237574,
+        "y": 18.8570752717,
+        "z": 18.86995
+      },
+      "bbox_center": {
+        "x": 78.5,
+        "y": 102.813,
+        "z": 8.206625
+      },
+      "bbox_min": {
+        "x": 57.880717,
+        "y": 93.384462,
+        "z": -1.22835
+      },
+      "tray_offset": 3.751278,
+      "prinjection": [
+        {
+          "x": -16.3,
+          "y": 190.219538681914,
+          "z": 29.8,
+          "overrides": {
+            "nozzle_temperature": 150
+          }
+        }
+      ],
+      "mesh": "part-3.stl",
+      "overrides": {
+        "tray_rotation": "-90",
+        "note": null,
+        "fan_speed": 3.7922
+      }
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 238.950364,
+        "y": 93.39,
+        "z": 35.7365970854
+      },
+      "pause_layer": 397,
+      "length": 45.44,
+      "width": 1.089,
+      "height": 0.358058,
+      "horizontal": false,
+      "line_from": {
+        "x": 238.950364,
+        "y": 70.67,
+        "z": 35.7365970854
+      },
+      "line_to": {
+        "x": 238.950364,
+        "y": 116.11,
+        "z": 35.7365970854
+      }
+    }
+  ]
+}

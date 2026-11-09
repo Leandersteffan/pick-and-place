@@ -1,0 +1,247 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pick-and-place.local/schema/spec.v1.schema.json",
+  "title": "Pick-and-place spec v1",
+  "description": "spec.json version 1 as it exists today. Grasshopper writes it (_part_record and process_print in Scripts/Py3-261103_1b2fe.py), and the Pipeline (Scripts/pipeline/traygen.py, layout_tray) adds or overwrites the write-back fields pick, slot, pocket, pocket_depth and slot_shape. All lengths are in mm. All coordinates are in Design_Space (the coordinates as stored in spec.json, Z up); pick and slot values use the tray frame that starts at tray_origin. Bed_Space (gcode) = Design_Space + bed offset, applied by the Pipeline, never stored here. Every object is closed (unknown keys are errors) except overrides, which hold free-form per-element settings.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "printer", "use_trace_braid", "housing", "tray", "tray_spacing", "tray_origin", "parts"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Spec format version. Always 1 for this schema."
+    },
+    "printer": {
+      "type": "string",
+      "description": "Printer name from the Grasshopper 'printer' input, trimmed and lower-cased, for example 'snapmaker u1', 'prusa xl', 'mini'. Selects OrcaSlicer (U1) or PrusaSlicer and the printer config."
+    },
+    "use_trace_braid": {
+      "type": "boolean",
+      "description": "Grasshopper 'braid' input. true: traces are exported with type 'trace_braid'; false: 'trace_cloth'."
+    },
+    "housing": {
+      "type": "string",
+      "pattern": "^housing\\.(3mf|stl)$",
+      "description": "File name of the housing mesh next to spec.json. Grasshopper writes 'housing.3mf'; 'housing.stl' is accepted as well."
+    },
+    "tray": {
+      "type": "string",
+      "enum": ["generated"],
+      "description": "Tray source. Only 'generated' exists: the Pipeline builds tray.stl from the parts."
+    },
+    "tray_spacing": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Gap between tray slots and to the tray edge, in mm. Grasshopper writes 3.0."
+    },
+    "tray_origin": {
+      "$ref": "#/$defs/vec3",
+      "description": "Lower-left corner of the tray layout, in mm. Grasshopper writes (0, 0, 0)."
+    },
+    "parts": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Elements to pick from the tray and place into the housing, in export order. Grasshopper does not write a spec without parts.",
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": { "type": "string", "description": "Part type. Selects the oneOf branch: 'trace_cloth' or 'trace_braid' (tracePart), 'plug' (plugPart), 'pcb' or 'print' (componentPart)." }
+        },
+        "discriminator": { "propertyName": "type" },
+        "oneOf": [
+          { "$ref": "#/$defs/tracePart" },
+          { "$ref": "#/$defs/plugPart" },
+          { "$ref": "#/$defs/componentPart" }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "vec3": {
+      "type": "object",
+      "description": "A point in mm, Z up.",
+      "additionalProperties": false,
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number", "description": "X in mm." },
+        "y": { "type": "number", "description": "Y in mm." },
+        "z": { "type": "number", "description": "Z in mm, Z up. May be negative." }
+      }
+    },
+    "rect": {
+      "type": "object",
+      "description": "Axis-aligned rectangle in the XY plane of the tray frame, in mm. (x0, y0) is the lower-left corner, (x1, y1) the upper-right corner.",
+      "additionalProperties": false,
+      "required": ["x0", "y0", "x1", "y1"],
+      "properties": {
+        "x0": { "type": "number", "description": "Minimum X in mm." },
+        "y0": { "type": "number", "description": "Minimum Y in mm." },
+        "x1": { "type": "number", "description": "Maximum X in mm." },
+        "y1": { "type": "number", "description": "Maximum Y in mm." }
+      }
+    },
+    "overrides": {
+      "type": "object",
+      "description": "Free-form per-element settings from the C# Overrides dictionary (Dictionary<string, string>), exported through _jsonable. Keys that match a gcode config key override that key for this element; the Pipeline converts the value to the config key's type. This is the only open object in the schema. Grasshopper leaves the key out when the dictionary is empty.",
+      "additionalProperties": {
+        "anyOf": [
+          { "type": "string" },
+          { "type": "number" },
+          { "type": "boolean" },
+          { "type": "null" }
+        ]
+      },
+      "properties": {
+        "tray_rotation": {
+          "anyOf": [
+            { "type": "number" },
+            { "type": "string" }
+          ],
+          "description": "Rotation in degrees about Z, read by traygen when it cuts the component pocket into the tray. Strings must hold a number."
+        }
+      }
+    },
+    "tamp": {
+      "type": "object",
+      "description": "A tamping point on a trace (C# TampingPoint), in Design_Space mm, Z up. z has no minimum: type-3 tamp depth puts the nozzle below Z 0.",
+      "additionalProperties": false,
+      "required": ["x", "y", "z", "type"],
+      "properties": {
+        "x": { "type": "number", "description": "X in mm, Design_Space." },
+        "y": { "type": "number", "description": "Y in mm, Design_Space." },
+        "z": { "type": "number", "description": "Z in mm, Design_Space, Z up. No minimum; negative values are valid." },
+        "type": {
+          "type": "integer",
+          "enum": [0, 1, 2, 3],
+          "description": "C# TampingType as an integer: 0 End, 1 TraceTrace, 2 TracePlug, 3 TracePCB."
+        },
+        "overrides": { "$ref": "#/$defs/overrides" }
+      }
+    },
+    "hole": {
+      "type": "object",
+      "description": "A prinjection point on a component (C# PrinjectionPoint), in Design_Space mm, Z up.",
+      "additionalProperties": false,
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number", "description": "X in mm, Design_Space." },
+        "y": { "type": "number", "description": "Y in mm, Design_Space." },
+        "z": { "type": "number", "description": "Z in mm, Design_Space, Z up." },
+        "overrides": { "$ref": "#/$defs/overrides" }
+      }
+    },
+    "pick": {
+      "$ref": "#/$defs/vec3",
+      "description": "Written by the Pipeline (traygen.layout_tray) on every run: where the nozzle picks the part up, in mm, tray frame, Z up. Grasshopper also exports a value (C# PickPt), which the Pipeline overwrites. No minimum on z. Optional; when it is missing, the assembler falls back to place."
+    },
+    "slot": {
+      "$ref": "#/$defs/rect",
+      "description": "Written by the Pipeline (traygen.layout_tray): the part's opening in the tray, in mm, tray frame. Optional; Grasshopper does not export it."
+    },
+    "pauseLayer": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "1-based housing print layer after which the part is placed (the Pipeline pauses when its layer counter equals this value). Computed in C# as round(Z / layer height) + 1. Required: the C# PauseLayer is a non-nullable int, so _part_record always writes it, even though its 'if layer is not None' guard could in theory skip it. The assembler would never place a part without it."
+    },
+    "tracePart": {
+      "type": "object",
+      "description": "A conductive trace (C# TraceElement).",
+      "additionalProperties": false,
+      "required": ["type", "place", "pause_layer", "length", "width", "height", "horizontal", "line_from", "line_to"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["trace_cloth", "trace_braid"],
+          "description": "'trace_braid' when use_trace_braid is true, otherwise 'trace_cloth'."
+        },
+        "place": { "$ref": "#/$defs/vec3", "description": "Where the trace is put down, in mm, Design_Space, Z up." },
+        "pick": {
+          "$ref": "#/$defs/pick",
+          "description": "Written by the Pipeline (traygen.layout_tray): pick point inside the trace slot, in mm, tray frame; z is the trace height. Grasshopper also exports a value, which the Pipeline overwrites."
+        },
+        "pause_layer": { "$ref": "#/$defs/pauseLayer" },
+        "length": { "type": "number", "exclusiveMinimum": 0, "description": "Trace length in mm along line_from to line_to." },
+        "width": { "type": "number", "exclusiveMinimum": 0, "description": "Trace width in mm." },
+        "height": { "type": "number", "exclusiveMinimum": 0, "description": "Trace thickness in mm." },
+        "horizontal": { "type": "boolean", "description": "C# IsHorizontal. true: the trace lies in a horizontal tray column; false: vertical." },
+        "line_from": { "$ref": "#/$defs/vec3", "description": "Start of the C# ModelLine, in mm, Design_Space. The nominal endpoint extended by width/2 + 0.15." },
+        "line_to": { "$ref": "#/$defs/vec3", "description": "End of the C# ModelLine, in mm, Design_Space. The nominal endpoint extended by width/2 + 0.15." },
+        "tamps": { "type": "array", "items": { "$ref": "#/$defs/tamp" }, "description": "Tamping points. Left out when there are none." },
+        "overrides": { "$ref": "#/$defs/overrides" },
+        "name": { "type": "string", "description": "Optional display name. Written only when the Grasshopper object has a non-empty Name." },
+        "slot": {
+          "$ref": "#/$defs/slot",
+          "description": "Written by the Pipeline (traygen.layout_tray): the trace's tray opening, in mm, tray frame."
+        }
+      }
+    },
+    "plugPart": {
+      "type": "object",
+      "description": "A round plug or connector (C# Plug).",
+      "additionalProperties": false,
+      "required": ["type", "place", "pause_layer", "radius", "height"],
+      "properties": {
+        "type": { "type": "string", "enum": ["plug"], "description": "Always 'plug'." },
+        "place": { "$ref": "#/$defs/vec3", "description": "Where the plug is put down, in mm, Design_Space, Z up." },
+        "pick": {
+          "$ref": "#/$defs/pick",
+          "description": "Written by the Pipeline (traygen.layout_tray): centre of the round plug slot, in mm, tray frame; z is the plug height. Grasshopper also exports a value, which the Pipeline overwrites."
+        },
+        "pause_layer": { "$ref": "#/$defs/pauseLayer" },
+        "radius": { "type": "number", "exclusiveMinimum": 0, "description": "Plug radius in mm." },
+        "height": { "type": "number", "exclusiveMinimum": 0, "description": "Plug height in mm." },
+        "tamps": { "type": "array", "items": { "$ref": "#/$defs/tamp" }, "description": "Tamping points. C# plugs have none today, but _part_record would write them, so they are allowed." },
+        "overrides": { "$ref": "#/$defs/overrides" },
+        "name": { "type": "string", "description": "Optional display name. Written only when the Grasshopper object has a non-empty Name." },
+        "slot": {
+          "$ref": "#/$defs/slot",
+          "description": "Written by the Pipeline (traygen.layout_tray): square bounding box of the round plug opening (radius + 0.25 mm), in mm, tray frame."
+        },
+        "slot_shape": {
+          "type": "string",
+          "enum": ["circle"],
+          "description": "Written by the Pipeline (traygen.layout_tray) for plugs: the opening inside slot is a circle."
+        }
+      }
+    },
+    "componentPart": {
+      "type": "object",
+      "description": "A PCB or a printed insert (C# PCB or Print). Its mesh is cut from the tray as a pocket.",
+      "additionalProperties": false,
+      "required": ["type", "place", "pause_layer", "size", "bbox_center", "bbox_min", "tray_offset", "mesh"],
+      "properties": {
+        "type": { "type": "string", "enum": ["pcb", "print"], "description": "'print' for a C# Print, 'pcb' for any other C# PCB." },
+        "place": { "$ref": "#/$defs/vec3", "description": "Where the component is put down, in mm, Design_Space, Z up." },
+        "pick": {
+          "$ref": "#/$defs/pick",
+          "description": "Written by the Pipeline (traygen.layout_tray): centre of the pocket, in mm, tray frame; z is size.z + 1. Grasshopper also exports a value, which the Pipeline overwrites."
+        },
+        "pause_layer": { "$ref": "#/$defs/pauseLayer" },
+        "size": { "$ref": "#/$defs/vec3", "description": "Bounding box size of the component geometry in mm (x, y > 0). Grasshopper writes it only for a non-degenerate box; traygen needs it to cut the pocket." },
+        "bbox_center": { "$ref": "#/$defs/vec3", "description": "Bounding box centre of the component geometry, in mm, Design_Space." },
+        "bbox_min": { "$ref": "#/$defs/vec3", "description": "Bounding box minimum corner of the component geometry, in mm, Design_Space." },
+        "tray_offset": { "type": "number", "description": "C# TrayOffset: clearance in mm between the component and its tray slot on each side. Only C# PCB and Print have TrayOffset, so only components carry it." },
+        "mesh": { "type": "string", "pattern": "^part-\\d+\\.stl$", "description": "File name of the component mesh next to spec.json, 'part-<index in parts>.stl'. Written only for pcb and print parts." },
+        "tamps": { "type": "array", "items": { "$ref": "#/$defs/tamp" }, "description": "Tamping points. Left out when there are none." },
+        "prinjection": { "type": "array", "items": { "$ref": "#/$defs/hole" }, "description": "Prinjection points (C# PrinjectionPoints). Left out when there are none." },
+        "overrides": { "$ref": "#/$defs/overrides" },
+        "name": { "type": "string", "description": "Optional display name. Written only when the Grasshopper object has a non-empty Name." },
+        "slot": {
+          "$ref": "#/$defs/slot",
+          "description": "Written by the Pipeline (traygen.layout_tray): outer tray slot, size + 2 * tray_offset, in mm, tray frame."
+        },
+        "pocket": {
+          "$ref": "#/$defs/rect",
+          "description": "Written by the Pipeline (traygen.layout_tray): inner pocket rectangle, slot shrunk by tray_offset, in mm, tray frame."
+        },
+        "pocket_depth": {
+          "type": "number",
+          "minimum": 0.4,
+          "description": "Written by the Pipeline (traygen.layout_tray): pocket depth in mm, size.z - 0.5, at least 0.4."
+        }
+      }
+    }
+  }
+}

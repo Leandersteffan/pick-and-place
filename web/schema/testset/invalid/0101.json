@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "printer": "prusa xl",
+  "use_trace_braid": true,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "print",
+      "place": {
+        "x": 4.05,
+        "y": 50.208,
+        "z": 0.9
+      },
+      "pick": {
+        "x": 116.92839515320752,
+        "y": 161.595,
+        "z": 13.536
+      },
+      "pause_layer": 299,
+      "size": {
+        "x": 36.0731493052,
+        "y": 59.8,
+        "z": 16.102
+      },
+      "bbox_center": {
+        "x": 142.85,
+        "y": 191.399382,
+        "z": 1.0654
+      },
+      "bbox_min": {
+        "x": 124.813425,
+        "y": 161.499382,
+        "z": -6.9856
+      },
+      "tray_offset": 2.0,
+      "name": "switch"
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "printer": "xl",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray_spacing": 0.594188,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 232.2823299065,
+        "y": 184.1,
+        "z": 9.420299
+      },
+      "pick": {
+        "x": 72.11,
+        "y": 159.79891524195133,
+        "z": 3.78
+      },
+      "pause_layer": 275,
+      "length": 1.633433634217936,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 231.465613,
+        "y": 184.1,
+        "z": 9.420299
+      },
+      "line_to": {
+        "x": 233.099047,
+        "y": 184.1,
+        "z": 9.420299
+      },
+      "tamps": [
+        {
+          "x": 3.331419,
+          "y": 247.8,
+          "z": 25.1,
+          "type": 1
+        },
+        {
+          "x": 92.3592771456,
+          "y": 255.6864594361,
+          "z": 27.9687,
+          "type": 1
+        }
+      ],
+      "overrides": {
+        "tray_rotation": "180",
+        "retract_length": 72,
+        "first_layer_speed": 132,
+        "nozzle_temperature": "210"
+      },
+      "name": "insert 1"
+    }
+  ]
+}

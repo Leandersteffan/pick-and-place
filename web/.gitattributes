@@ -1,0 +1,2 @@
+# Fixture bytes must not be converted (no EOL normalization): manifest.json pins their SHA-256 hashes.
+fixtures/** -text

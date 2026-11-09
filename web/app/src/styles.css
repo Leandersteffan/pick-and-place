@@ -1,0 +1,887 @@
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+  background: #1e1f22;
+  color: #ddd;
+}
+
+.app {
+  display: grid;
+  height: 100%;
+  grid-template-columns: 1fr 320px;
+  grid-template-rows: 40px 1fr 160px;
+  grid-template-areas:
+    'toolbar toolbar'
+    'viewport side'
+    'timeline timeline';
+}
+
+.app-toolbar {
+  grid-area: toolbar;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border-bottom: 1px solid #333;
+}
+
+.app-viewport {
+  grid-area: viewport;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+}
+
+.app-side-panel {
+  grid-area: side;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  border-left: 1px solid #333;
+}
+
+/* Status and Selection scroll on their own above the gcode pane. */
+.app-side-top {
+  flex: 1 1 0;
+  min-height: 80px;
+  overflow: auto;
+}
+
+.app-timeline {
+  grid-area: timeline;
+  overflow: hidden;
+  border-top: 1px solid #333;
+}
+
+/* Toolbar */
+.app-toolbar button {
+  font: inherit;
+  color: #ddd;
+  background: #2b2d31;
+  border: 1px solid #44464c;
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.app-toolbar button:hover:not(:disabled) {
+  background: #35373c;
+}
+
+.app-toolbar button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.toolbar-sep {
+  width: 1px;
+  height: 20px;
+  background: #3a3c41;
+  margin: 0 4px;
+}
+
+.toolbar-fill {
+  flex: 1;
+}
+
+.toolbar-muted {
+  color: #999;
+}
+
+.status-chip {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  border: 1px solid;
+}
+
+.status-ok {
+  color: #7ed491;
+  border-color: #3d6b48;
+  background: #1f2f24;
+}
+
+.status-bad {
+  color: #f08a84;
+  border-color: #7a3c38;
+  background: #34201f;
+}
+
+/* Status panel */
+.status-panel {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.status-empty {
+  margin: 0;
+  color: #999;
+  line-height: 1.4;
+}
+
+.status-line {
+  font-weight: 600;
+}
+
+.status-ok-text {
+  color: #7ed491;
+}
+
+.status-bad-text {
+  color: #f08a84;
+}
+
+.status-warn-text {
+  color: #e6c06a;
+}
+
+.status-toggle {
+  font: inherit;
+  font-weight: 600;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.status-list {
+  margin: 6px 0 0;
+  padding-left: 16px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #c8c8c8;
+}
+
+.status-list li {
+  margin-bottom: 3px;
+  word-break: break-word;
+}
+
+code.pointer {
+  font-family: ui-monospace, Consolas, monospace;
+  color: #9fc3ff;
+  background: #26282d;
+  padding: 0 3px;
+  border-radius: 3px;
+}
+
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  line-height: 1.4;
+}
+
+.banner span {
+  flex: 1;
+  word-break: break-word;
+}
+
+.banner-error {
+  color: #f6c3bf;
+  background: #3a2221;
+  border: 1px solid #7a3c38;
+}
+
+.banner-warn {
+  color: #f3dfa8;
+  background: #352f1e;
+  border: 1px solid #7a6a36;
+}
+
+.banner-info {
+  color: #cfe0f6;
+  background: #1f2a38;
+  border: 1px solid #3c5a7a;
+  align-items: center;
+}
+
+.banner-action {
+  font: inherit;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 1px 8px;
+}
+
+.banner-close {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+/* Drag and drop */
+.drop-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20, 21, 24, 0.7);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.drop-overlay-box {
+  padding: 24px 32px;
+  border: 2px dashed #6a8fd0;
+  border-radius: 8px;
+  color: #cfdcf5;
+  background: #23262c;
+}
+
+/* Scene overlays */
+.scene-overlay {
+  position: absolute;
+  top: 8px;
+  display: flex;
+  gap: 6px;
+  padding: 6px 8px;
+  font-size: 12px;
+  background: rgba(30, 31, 34, 0.85);
+  border: 1px solid #3a3c41;
+  border-radius: 4px;
+  z-index: 1;
+}
+
+.scene-overlay-left {
+  left: 8px;
+  flex-wrap: wrap;
+  max-width: calc(50% - 16px);
+}
+
+.scene-overlay-right {
+  right: 8px;
+  flex-direction: column;
+  align-items: flex-end;
+  max-width: calc(50% - 16px);
+}
+
+.vis-toggle {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.segmented {
+  display: flex;
+}
+
+.segmented button {
+  font: inherit;
+  color: #ccc;
+  background: #2b2d31;
+  border: 1px solid #44464c;
+  padding: 2px 10px;
+  cursor: pointer;
+}
+
+.segmented button:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.segmented button:last-child {
+  border-radius: 0 4px 4px 0;
+  border-left: none;
+}
+
+.segmented button.active {
+  color: #fff;
+  background: #3b5c94;
+  border-color: #4f74b3;
+}
+
+.space-label {
+  font-family: ui-monospace, Consolas, monospace;
+  color: #cfdcf5;
+  text-align: right;
+  word-break: break-word;
+}
+
+/* Toolpath note in Design_Space (added to the Canvas wrapper by Toolpath.tsx) */
+.toolpath-note {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  font-size: 12px;
+  color: #cfdcf5;
+  background: rgba(30, 31, 34, 0.85);
+  border: 1px solid #3a3c41;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Selection side panel */
+.side-panel {
+  padding: 10px 12px;
+  border-top: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.side-title {
+  margin: 0;
+  font-size: 13px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.side-heading {
+  font-weight: 600;
+  color: #4cc2ff;
+}
+
+.side-file {
+  font-size: 12px;
+}
+
+.json-list {
+  list-style: none;
+  margin: 0;
+  padding-left: 14px;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.json-root {
+  padding-left: 0;
+}
+
+.json-toggle {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.json-key {
+  color: #9fc3ff;
+}
+
+.json-summary {
+  color: #888;
+}
+
+.json-string {
+  color: #a5d68b;
+}
+
+.json-number {
+  color: #e6c06a;
+}
+
+.json-boolean,
+.json-null {
+  color: #d69be6;
+}
+
+/* Timeline (footer) */
+.timeline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  font-size: 12px;
+}
+
+.timeline-empty {
+  color: #999;
+}
+
+.timeline button,
+.timeline select {
+  font: inherit;
+  color: #ddd;
+  background: #2b2d31;
+  border: 1px solid #44464c;
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+
+.timeline button:hover {
+  background: #35373c;
+}
+
+.timeline-play {
+  min-width: 34px;
+}
+
+/* Range and marker strip share one box. The strip is inset by half a thumb on each
+   side so a marker at moveIndex / (n - 1) sits where the thumb centre would. */
+.timeline-track {
+  --thumb-half: 8px;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-range {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  accent-color: #4f74b3;
+}
+
+.timeline .timeline-event-nav {
+  white-space: nowrap;
+}
+
+.timeline button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* Event markers (Requirement 7) */
+.event-markers {
+  position: relative;
+  height: 64px;
+  margin: 0 var(--thumb-half);
+}
+
+.event-stack {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  gap: 1px;
+  transform: translateX(-1.5px);
+}
+
+.event-stack:hover {
+  z-index: 1;
+}
+
+.timeline .event-marker {
+  display: flex;
+  align-items: center;
+  height: 8px;
+  width: 3px;
+  padding: 0;
+  border: 0;
+  border-radius: 1px;
+  background: var(--event-color, #888);
+  overflow: visible;
+}
+
+.timeline .event-marker:hover {
+  background: #fff;
+}
+
+.timeline .event-flag {
+  height: 12px;
+}
+
+.event-label {
+  margin-left: 5px;
+  padding: 0 3px;
+  font-size: 10px;
+  line-height: 12px;
+  white-space: nowrap;
+  color: #eee;
+  background: rgba(30, 31, 34, 0.85);
+  border-left: 2px solid var(--event-color, #888);
+}
+
+.event-pause { --event-color: #e05555; }
+.event-placement_group { --event-color: #e0b84f; }
+.event-placing { --event-color: #f2d27a; }
+.event-pnp_header { --event-color: #a58fd6; }
+.event-pick_seq { --event-color: #4fc3d9; }
+.event-place_seq { --event-color: #5bd17a; }
+.event-tamping { --event-color: #e08a4f; }
+.event-prinjection { --event-color: #d65fb8; }
+.event-wipe { --event-color: #8a8f99; }
+
+/* Temperature and fan track (Requirement 8). Same half-thumb inset as the marker strip,
+   so x = moveIndex / (n - 1) of the inner width matches the range thumb centre. */
+.tempfan {
+  position: relative;
+  height: 44px;
+  margin: 2px var(--thumb-half) 0;
+}
+
+.tempfan-svg {
+  display: block;
+  overflow: visible;
+}
+
+.tempfan-axis {
+  stroke: #44464c;
+  stroke-width: 1;
+}
+
+.tempfan-temp {
+  fill: none;
+  stroke: #e0703a;
+  stroke-width: 1.5;
+  stroke-linejoin: miter;
+}
+
+.tempfan-fan {
+  fill: none;
+  stroke: #5fa8d3;
+  stroke-width: 1;
+  stroke-opacity: 0.85;
+}
+
+.tempfan-wait circle {
+  fill: #f2c14e;
+}
+
+.tempfan-wait text,
+.tempfan-tick {
+  font-size: 9px;
+  font-family: ui-monospace, Consolas, monospace;
+}
+
+.tempfan-wait text {
+  fill: #f2c14e;
+}
+
+.tempfan-tick {
+  fill: #e0703a;
+  opacity: 0.7;
+}
+
+.tempfan-tick-fan {
+  fill: #5fa8d3;
+}
+
+.tempfan-playhead {
+  stroke: #ddd;
+  stroke-width: 1;
+  stroke-opacity: 0.6;
+}
+
+.tempfan-readout {
+  display: flex;
+  flex-direction: column;
+  font-family: ui-monospace, Consolas, monospace;
+  white-space: nowrap;
+}
+
+.tempfan-readout-temp {
+  color: #e0703a;
+}
+
+.tempfan-readout-fan {
+  color: #5fa8d3;
+}
+
+.timeline-time,
+.timeline-index {
+  font-family: ui-monospace, Consolas, monospace;
+  color: #cfdcf5;
+  white-space: nowrap;
+}
+
+.timeline-index {
+  color: #999;
+}
+
+/* Toolpath legend and layer sliders (viewport overlay, bottom-left) */
+.toolpath-legend {
+  top: auto;
+  bottom: 8px;
+  left: 8px;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 260px;
+}
+
+.legend-types {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 10px;
+}
+
+.legend-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.legend-layers {
+  display: grid;
+  grid-template-columns: 54px 1fr 1fr auto;
+  align-items: center;
+  gap: 4px;
+}
+
+.legend-layers input[type='range'] {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  accent-color: #4f74b3;
+}
+
+.legend-layers-label {
+  color: #aaa;
+}
+
+.legend-layers-value {
+  font-family: ui-monospace, Consolas, monospace;
+  color: #cfdcf5;
+  min-width: 52px;
+  text-align: right;
+}
+
+/* Gcode text pane (Requirement 9). Collapsed it is only its header; open it shares the
+   aside with Status and Selection. Rows are absolutely placed by the virtualiser. */
+.gcode-pane {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-top: 1px solid #333;
+}
+
+.gcode-pane.is-open {
+  flex: 1.4 1 0;
+  min-height: 120px;
+}
+
+.gcode-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: #999;
+}
+
+.gcode-toggle {
+  font: inherit;
+  color: #aaa;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gcode-count {
+  margin-left: auto;
+}
+
+.gcode-follow {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+}
+
+.gcode-hint {
+  padding: 0 12px 10px;
+}
+
+.gcode-unhandled {
+  position: relative;
+  display: flex;
+  gap: 4px;
+  padding: 0 12px 6px;
+}
+
+.gcode-chip {
+  font: inherit;
+  font-size: 11px;
+  color: #f2c94c;
+  background: #3a3220;
+  border: 1px solid #6b5a2a;
+  border-radius: 10px;
+  padding: 1px 8px;
+  cursor: pointer;
+}
+
+.gcode-chip:hover {
+  background: #4a4028;
+}
+
+.gcode-chip-more {
+  padding: 1px 6px;
+}
+
+.gcode-unhandled-list {
+  position: absolute;
+  top: 100%;
+  left: 12px;
+  right: 12px;
+  z-index: 2;
+  max-height: 160px;
+  overflow: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 6px;
+  background: #26282c;
+  border: 1px solid #444;
+  border-radius: 4px;
+}
+
+.gcode-unhandled-item {
+  font: 11px ui-monospace, Consolas, monospace;
+  color: #ddd;
+  background: #33363b;
+  border: 0;
+  border-radius: 3px;
+  padding: 1px 5px;
+  cursor: pointer;
+}
+
+.gcode-unhandled-item.is-focus,
+.gcode-unhandled-item:hover {
+  background: #6b5a2a;
+}
+
+.gcode-unhandled-rest {
+  font-size: 11px;
+  color: #999;
+}
+
+.gcode-scroll {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: auto;
+  background: #18191b;
+  font: 12px/18px ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  contain: strict;
+  outline: none;
+}
+
+.gcode-sizer {
+  position: relative;
+  width: 100%;
+}
+
+.gcode-row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 18px;
+  display: flex;
+  white-space: pre;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+}
+
+.gcode-row:hover {
+  background: #232529;
+}
+
+.gcode-row.is-marker {
+  border-left-color: var(--marker-tint);
+  background: color-mix(in srgb, var(--marker-tint) 12%, transparent);
+}
+
+.gcode-row.is-marker .gc-comment {
+  color: var(--marker-tint);
+}
+
+.gcode-row.is-unhandled .gcode-ln {
+  color: #f2c94c;
+}
+
+.gcode-row.is-focus {
+  outline: 1px solid #f2c94c;
+  outline-offset: -1px;
+}
+
+.gcode-row.is-active {
+  background: #2c4a66;
+}
+
+.gcode-ln {
+  flex: 0 0 auto;
+  width: var(--ln-width, 6ch);
+  padding: 0 6px 0 4px;
+  text-align: right;
+  color: #5c6068;
+  user-select: none;
+}
+
+.gcode-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gc-comment { color: #7a7f87; }
+.gc-move { color: #f2f2f2; }
+.gc-temp { color: #ff9f6b; }
+.gc-fan { color: #6bc5ff; }
+.gc-pause { color: #ff6b6b; font-weight: 600; }
+.gc-cmd { color: #b9a6e6; }
+.gc-macro { color: #8fd18f; }
+.gc-other { color: #c8c8c8; }
+
+/* Editor panel (task 13.9) */
+.editor-panel { margin-bottom: 0.75em; }
+.editor-row { margin: 0.35em 0; }
+.editor-stale { font-weight: 600; }
+
+/* Backend: health banner, Regenerate overlay and failure panel */
+.backend-banner {
+  background: #fff4d6;
+  border: 1px solid #e0b84a;
+  color: #5a4300;
+  padding: 6px 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+.backend-banner button { margin-top: 4px; }
+.regenerate-overlay { pointer-events: auto; }
+.regenerate-overlay .drop-overlay-box { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.regenerate-failure {
+  background: #fde8e8;
+  border: 1px solid #d66;
+  color: #611;
+  padding: 6px 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+.regenerate-log {
+  max-height: 200px;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 4px;
+  font-size: 11px;
+  white-space: pre-wrap;
+}

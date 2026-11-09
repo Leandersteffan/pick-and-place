@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "printer": "snapmaker u1 (0.4 nozzle)",
+  "use_trace_braid": true,
+  "housing": "housing.stl",
+  "tray": "generated",
+  "tray_spacing": 3.1702210941,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "plug",
+      "place": {
+        "x": 235.1422,
+        "y": 181.836,
+        "z": 16.963503411584874
+      },
+      "pick": {
+        "x": 108.67,
+        "y": 144.3616869988127,
+        "z": 3.78
+      },
+      "pause_layer": 245,
+      "radius": 3.6,
+      "height": 0.452,
+      "slot": {
+        "x0": 111.724,
+        "y0": 33.805,
+        "x1": 132.7227,
+        "y1": 39.314658
+      },
+      "slot_shape": "circle"
+    },
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 203.56,
+        "y": 171.1,
+        "z": 24.2
+      },
+      "pick": {
+        "x": 186.3982981812,
+        "y": 105.3,
+        "z": 2.86
+      },
+      "pause_layer": 136,
+      "length": 30.552788,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 188.283606,
+        "y": 171.1,
+        "z": 24.2
+      },
+      "line_to": {
+        "x": 218.836394,
+        "y": 171.1,
+        "z": 24.2
+      }
+    },
+    {
+      "type": "pcb",
+      "place": {
+        "x": 250.3079,
+        "y": -7.5,
+        "z": 26.64
+      },
+      "pick": {
+        "x": 83.407933,
+        "y": 39.214,
+        "z": 7.1542841201
+      },
+      "pause_layer": 73,
+      "size": {
+        "x": 6.863391249084132,
+        "y": 42.151668,
+        "z": 6.161
+      },
+      "bbox_center": {
+        "x": 192.7917,
+        "y": 74.6812,
+        "z": 3.013930462440841
+      },
+      "bbox_min": {
+        "x": 189.360004,
+        "y": 53.605366,
+        "z": -0.06657
+      },
+      "tray_offset": 2.0,
+      "mesh": "part-2.stl",
+      "overrides": {
+        "tray_rotation": "12.5",
+        "note": true,
+        "retract_length": "fast",
+        "wall_loops": 76.7
+      },
+      "pocket": {
+        "x0": 11.0,
+        "y0": 43.3,
+        "x1": 51.586778,
+        "y1": 91.84
+      },
+      "pocket_depth": 19.567780792
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "bundle_format": 1,
+  "spec_version": 1,
+  "web_app_version": "0.1.0",
+  "pipeline_version": null,
+  "created_utc": "2026-11-08T10:36:00Z",
+  "gcode_stale": false,
+  "offsets": {
+    "tray": [
+      0.5,
+      1.0
+    ],
+    "model": [
+      0.5,
+      23.615634
+    ],
+    "source": "backend"
+  },
+  "files": {
+    "README.md": {
+      "sha256": "9d37b444bfd36f357ec5e7acad63f081e2e96ef011c61dc48cb8c316aea9acc9",
+      "bytes": 1383
+    },
+    "combined_output.gcode": {
+      "sha256": "cd5b7fd6dca4ff9c2f4fcc8870d4135fe24e792202239cf96d2d02e8f49e912b",
+      "bytes": 226148
+    },
+    "housing.3mf": {
+      "sha256": "60f54daaa164739648e333008d52d1d1081881f622c3663381d830fe29013554",
+      "bytes": 163608
+    },
+    "housing.stl": {
+      "sha256": "b9786e05916325e34650a71fb3d53d0798424eeeae0650c388ddf47dee234c29",
+      "bytes": 648384
+    },
+    "part-2.stl": {
+      "sha256": "690c64ea2a4f1a3e2b0654f8f08702878aeb6b1503cd95805687a91a4de99ae7",
+      "bytes": 219979
+    },
+    "spec.export.json": {
+      "sha256": "64f65ff2d4ed3ab06dd23d9b093c66d0cd0d4bcd7719b0eabf31a3f9dd9d4d60",
+      "bytes": 3308
+    },
+    "spec.json": {
+      "sha256": "198d23433ae4cc5bd4ccdae1cff028f2f8d27d5fca7be07711492afc34b9c224",
+      "bytes": 3909
+    },
+    "tray.stl": {
+      "sha256": "c33fc5ffcb7ddeaff68f59e6b624a5482c76de8d28503e9de2499b685b4c605f",
+      "bytes": 199902
+    }
+  }
+}

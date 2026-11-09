@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "printer": "prusa xl",
+  "use_trace_braid": true,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 261.27,
+        "y": 135.24,
+        "z": 15.459372
+      },
+      "pick": {
+        "x": 167.592,
+        "y": 24.0884013911,
+        "z": 3.487505862803414
+      },
+      "pause_layer": 150,
+      "length": 77.3622,
+      "width": 2.8,
+      "height": 1.6,
+      "horizontal": true,
+      "line_from": {
+        "x": 222.5889,
+        "y": 135.24,
+        "z": 15.459372
+      },
+      "line_to": {
+        "x": 299.9511,
+        "y": 135.24,
+        "z": 15.459372
+      },
+      "tamps": [
+        {
+          "x": 182.7021,
+          "y": 197.363,
+          "z": 4.4,
+          "type": 1
+        },
+        {
+          "x": 220.7,
+          "y": 138.0,
+          "z": 8.9460390748,
+          "type": 1,
+          "overrides": {
+            "note": null,
+            "fan_speed": null,
+            "wall_loops": null
+          }
+        },
+        {
+          "x": 36.70744029799799,
+          "y": 127.2,
+          "z": 18.0450939152,
+          "type": 3
+        }
+      ]
+    },
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 278.867288,
+        "y": 218.2027,
+        "z": 14.927627
+      },
+      "pick": {
+        "x": 32.823613,
+        "y": 49.449,
+        "z": 0.69
+      },
+      "pause_layer": 313,
+      "length": 16.416,
+      "width": 2.8,
+      "height": 0.7,
+      "horizontal": false,
+      "line_from": {
+        "x": 278.867288,
+        "y": 209.9947,
+        "z": 14.927627
+      },
+      "line_to": {
+        "x": 278.867288,
+        "y": 226.4107,
+        "z": 14.927627
+      },
+      "tamps": [],
+      "overrides": {
+        "tray_rotation": 144.00787816033227,
+        "retract_length": false
+      },
+      "name": "trace B"
+    }
+  ]
+}

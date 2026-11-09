@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "printer": "snapmaker u1 (0.4 nozzle)",
+  "use_trace_braid": false,
+  "housing": "housing.stl",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": -5.5,
+    "y": 242.14,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 121.9287885608,
+        "y": 268.363712,
+        "z": 1.9222
+      },
+      "pick": {
+        "x": 15.41,
+        "y": 144.5013165096,
+        "z": 3.2628
+      },
+      "pause_layer": "60",
+      "length": 52.99,
+      "width": 2.8,
+      "height": 0.37,
+      "horizontal": true,
+      "line_from": {
+        "x": 95.433789,
+        "y": 268.363712,
+        "z": 1.9222
+      },
+      "line_to": {
+        "x": 148.423789,
+        "y": 268.363712,
+        "z": 1.9222
+      },
+      "name": "trace A"
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 56.7578267906,
+        "y": 156.21,
+        "z": 8.5
+      },
+      "pick": {
+        "x": 33.90055799408569,
+        "y": 115.7196,
+        "z": 1.6
+      },
+      "pause_layer": 147,
+      "length": 13.0984,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 50.208627,
+        "y": 156.21,
+        "z": 8.5
+      },
+      "line_to": {
+        "x": 63.307027,
+        "y": 156.21,
+        "z": 8.5
+      },
+      "tamps": [
+        {
+          "x": 143.1,
+          "y": 248.7533,
+          "z": 21.408,
+          "type": 1
+        },
+        {
+          "x": 167.665,
+          "y": 175.3082341887,
+          "z": 0.886,
+          "type": 0
+        }
+      ],
+      "name": "battery clip"
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 45.0,
+        "y": 272.6,
+        "z": 3.412126
+      },
+      "pick": {
+        "x": 175.1,
+        "y": 44.7746,
+        "z": -0.436674
+      },
+      "pause_layer": 116,
+      "length": 56.61,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 45.0,
+        "y": 244.295,
+        "z": 3.412126
+      },
+      "line_to": {
+        "x": 45.0,
+        "y": 300.905,
+        "z": 3.412126
+      },
+      "overrides": {
+        "note": 98
+      },
+      "name": "\u00dc-plug"
+    },
+    {
+      "type": "print",
+      "place": {
+        "x": 175.1337739066441,
+        "y": 142.7617251243,
+        "z": 23.66
+      },
+      "pause_layer": 36,
+      "size": {
+        "x": 49.36,
+        "y": 54.1985,
+        "z": 18.4079493472
+      },
+      "bbox_center": {
+        "x": 216.9770591188,
+        "y": 193.99,
+        "z": 4.6096595482
+      },
+      "bbox_min": {
+        "x": 192.297059,
+        "y": 166.89075,
+        "z": -4.594315
+      },
+      "tray_offset": 2.0,
+      "mesh": "part-3.stl",
+      "name": "battery clip"
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 107.8838,
+        "y": 83.26396743,
+        "z": 32.6340187326
+      },
+      "pause_layer": 65,
+      "length": 89.2,
+      "width": 4.473,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 107.8838,
+        "y": 38.663967,
+        "z": 32.6340187326
+      },
+      "line_to": {
+        "x": 107.8838,
+        "y": 127.863967,
+        "z": 32.6340187326
+      }
+    }
+  ]
+}

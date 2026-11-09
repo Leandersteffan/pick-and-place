@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "printer": "xl",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 260.4,
+    "y": 197.0569,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "plug",
+      "place": {
+        "x": 163.34,
+        "y": 147.809877,
+        "z": 7.227849398699928
+      },
+      "pick": {
+        "x": 185.6867194412,
+        "y": 166.23,
+        "z": 9.562
+      },
+      "pause_layer": 111,
+      "radius": 5.728355730211464,
+      "height": 9.238859,
+      "slot": {
+        "x0": 189.726463006,
+        "y0": 96.076,
+        "x1": 213.151863,
+        "y1": 124.1086
+      }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "printer": "prusa mini",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "pcb",
+      "place": {
+        "x": 86.35,
+        "y": 223.0315398534,
+        "z": 33.139467440532734
+      },
+      "pause_layer": 51,
+      "size": {
+        "x": 13.980074,
+        "y": 33.9917322424,
+        "z": 12.8
+      },
+      "bbox_center": {
+        "x": 70.2773140389,
+        "y": 214.9806212682,
+        "z": 16.511
+      },
+      "bbox_min": {
+        "x": 63.287277,
+        "y": 197.984755,
+        "z": 10.111
+      },
+      "tray_offset": 2.0,
+      "prinjection": [],
+      "mesh": "part-0.stl",
+      "overrides": {
+        "tray_rotation": "45",
+        "wall_loops": 233.9137655147,
+        "fan_speed": "0.8",
+        "note": null
+      }
+    }
+  ]
+}

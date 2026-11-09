@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "printer": "snapmaker u1",
+  "use_trace_braid": false,
+  "housing": "housing.stl",
+  "tray": "generated",
+  "tray_spacing": 7.2735231399,
+  "tray_origin": {
+    "x": 29.7041,
+    "y": -12.0741,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "print",
+      "place": {
+        "x": 147.1849,
+        "y": 26.8,
+        "z": 19.4440655856
+      },
+      "pause_layer": 124,
+      "size": {
+        "x": 24.2084403586,
+        "y": 31.9345802356,
+        "z": 12.884
+      },
+      "bbox_center": {
+        "x": 140.6183842023,
+        "y": 36.47,
+        "z": 10.4
+      },
+      "bbox_min": {
+        "x": 128.514164,
+        "y": 20.50271,
+        "z": 3.958
+      },
+      "tray_offset": 2.0,
+      "mesh": "part-0.stl",
+      "overrides": {
+        "tray_rotation": -178.81,
+        "retract_length": "210"
+      }
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "printer": "mini",
+  "use_trace_braid": true,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 249.287681,
+        "y": 4.041,
+        "z": 36.430409
+      },
+      "pick": {
+        "x": 84.002,
+        "y": 48.153894,
+        "z": 0.52
+      },
+      "pause_layer": 238,
+      "length": 9.783127487769997,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 249.287681,
+        "y": -0.850564,
+        "z": 36.430409
+      },
+      "line_to": {
+        "x": 249.287681,
+        "y": 8.932564,
+        "z": 36.430409
+      },
+      "tamps": [
+        {
+          "x": -19.6,
+          "y": 231.4,
+          "z": 2.052306836480305,
+          "type": 2
+        },
+        {
+          "x": 91.1370836878,
+          "y": 168.69,
+          "z": 9.996,
+          "type": 3,
+          "overrides": {
+            "tray_rotation": 116.53,
+            "nozzle_temperature": "210",
+            "note": 255
+          }
+        },
+        {
+          "x": 0.165,
+          "y": 241.8,
+          "z": 3.73,
+          "type": 1
+        }
+      ],
+      "overrides": {
+        "tray_rotation": 118.0373
+      },
+      "slot": {
+        "x0": 109.361,
+        "y0": 92.59,
+        "x1": 141.261,
+        "y1": 122.299725
+      }
+    },
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 156.4700142087,
+        "y": 84.46,
+        "z": 11.288592
+      },
+      "pause_layer": 272,
+      "length": 54.3915,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 129.274264,
+        "y": 84.46,
+        "z": 11.288592
+      },
+      "line_to": {
+        "x": 183.665764,
+        "y": 84.46,
+        "z": 11.288592
+      },
+      "tamps": [
+        {
+          "x": 204.7999366417605,
+          "y": 144.3186,
+          "z": 1.0035496111,
+          "type": 0,
+          "overrides": {
+            "nozzle_temperature": null,
+            "wall_loops": 28
+          }
+        }
+      ],
+      "overrides": {
+        "note": "default"
+      }
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "printer": "snapmaker u1",
+  "use_trace_braid": true,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "plug",
+      "place": {
+        "x": 64.6369339146569,
+        "y": 97.8017596489,
+        "z": 31.896668541155314
+      },
+      "pause_layer": 36,
+      "radius": 2.3,
+      "height": 8.1,
+      "tamps": [
+        {
+          "x": 94.35126136405407,
+          "y": 102.44,
+          "z": -0.815767173,
+          "type": 2
+        },
+        {
+          "x": 8.610148,
+          "y": 245.78,
+          "z": 16.859754,
+          "type": 3,
+          "overrides": {
+            "nozzle_temperature": "on",
+            "first_layer_speed": "",
+            "note": true
+          }
+        },
+        {
+          "x": 17.14,
+          "y": 14.3355688976,
+          "z": -0.7763985210684,
+          "type": 1,
+          "overrides": {
+            "note": "default"
+          }
+        }
+      ],
+      "overrides": {
+        "tray_rotation": "12.5",
+        "nozzle_temperature": 92.32371433295526
+      },
+      "name": "trace A"
+    }
+  ]
+}

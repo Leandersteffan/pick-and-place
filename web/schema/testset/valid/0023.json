@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "printer": "prusa xl",
+  "use_trace_braid": false,
+  "housing": "housing.stl",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 151.66148641357637,
+    "y": 22.8665938996,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "print",
+      "place": {
+        "x": 130.1015917381,
+        "y": 259.79996990394756,
+        "z": 21.8063076025
+      },
+      "pick": {
+        "x": 155.9,
+        "y": 184.5,
+        "z": 6.4892386207
+      },
+      "pause_layer": 120,
+      "size": {
+        "x": 57.8,
+        "y": 6.448819861537816,
+        "z": 1.5815
+      },
+      "bbox_center": {
+        "x": 208.258,
+        "y": 172.47935226577516,
+        "z": 6.6199
+      },
+      "bbox_min": {
+        "x": 179.358,
+        "y": 169.254942,
+        "z": 5.82915
+      },
+      "tray_offset": 2.0,
+      "mesh": "part-0.stl",
+      "name": "\u00dc-plug"
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 197.7009725985,
+        "y": 88.8,
+        "z": 10.937
+      },
+      "pause_layer": 189,
+      "length": 42.2,
+      "width": 4.3,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 176.600973,
+        "y": 88.8,
+        "z": 10.937
+      },
+      "line_to": {
+        "x": 218.800973,
+        "y": 88.8,
+        "z": 10.937
+      },
+      "name": "battery clip"
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 107.69,
+        "y": 82.2622,
+        "z": 38.4
+      },
+      "pause_layer": 351,
+      "length": 16.099269036856214,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 99.640365,
+        "y": 82.2622,
+        "z": 38.4
+      },
+      "line_to": {
+        "x": 115.739635,
+        "y": 82.2622,
+        "z": 38.4
+      },
+      "tamps": [],
+      "overrides": {
+        "tray_rotation": -40.762445,
+        "fan_speed": 92.19037514476699
+      },
+      "name": "\u00dc-plug"
+    }
+  ]
+}

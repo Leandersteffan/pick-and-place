@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "printer": "prusa xl",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 14.83445151307155,
+    "y": 74.697,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "led",
+      "place": {
+        "x": 254.1,
+        "y": -4.364448,
+        "z": 2.92
+      },
+      "pick": {
+        "x": 125.3365258194203,
+        "y": 70.5832,
+        "z": 0.864469
+      },
+      "pause_layer": 56,
+      "length": 11.89,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 248.155,
+        "y": -4.364448,
+        "z": 2.92
+      },
+      "line_to": {
+        "x": 260.045,
+        "y": -4.364448,
+        "z": 2.92
+      },
+      "tamps": [
+        {
+          "x": 10.55374,
+          "y": 204.2004521719552,
+          "z": 9.237569902853512,
+          "type": 2
+        }
+      ]
+    }
+  ]
+}

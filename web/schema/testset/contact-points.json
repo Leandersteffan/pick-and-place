@@ -1,0 +1,91 @@
+{
+  "description": "Shared test vector for contact-point derivation. Checked by web/app/src/model/contactPoints.test.ts (deriveContactPoints) and web/server/tests/test_contact_points.py (derive_contact_points). Each case gives a partial Spec and the exact expected contact points.",
+  "cases": [
+    {
+      "name": "fixture: type-3 tamps merge into the lower prinjection points",
+      "spec": {
+        "parts": [
+          {
+            "type": "trace_cloth",
+            "tamps": [
+              { "x": 15.508441653631088, "y": 24.95215419341518, "z": 2.2061870997149393, "type": 0 },
+              { "x": 15.508441653631088, "y": 14.179259206740921, "z": 2.2061870997149393, "type": 3 }
+            ]
+          },
+          {
+            "type": "trace_cloth",
+            "tamps": [
+              { "x": 8.523756700318637, "y": 25.006280341340158, "z": 2.2061870997149398, "type": 0 },
+              { "x": 8.523756700318637, "y": 14.183615706740925, "z": 2.2061870997149398, "type": 3 }
+            ]
+          },
+          {
+            "type": "pcb",
+            "prinjection": [
+              { "x": 8.523756700318637, "y": 14.183615706740925, "z": 2.0061870997149396 },
+              { "x": 15.508441653631088, "y": 14.179259206740921, "z": 2.0061870997149396 }
+            ]
+          }
+        ]
+      },
+      "expected": [
+        { "x": 8.523756700318637, "y": 14.183615706740925, "z": 2.0061870997149396, "origin": "prinjection" },
+        { "x": 15.508441653631088, "y": 14.179259206740921, "z": 2.0061870997149396, "origin": "prinjection" }
+      ]
+    },
+    {
+      "name": "overrides merge with tamp keys winning, within 0.001 mm",
+      "spec": {
+        "parts": [
+          {
+            "type": "pcb",
+            "prinjection": [
+              { "x": 1.0, "y": 2.0, "z": 1.0, "overrides": { "a": "1", "b": "1" } }
+            ]
+          },
+          {
+            "type": "trace_braid",
+            "tamps": [
+              { "x": 1.0005, "y": 2.0, "z": 1.2, "type": 3, "overrides": { "b": "2" } }
+            ]
+          }
+        ]
+      },
+      "expected": [
+        { "x": 1.0, "y": 2.0, "z": 1.0, "origin": "prinjection", "overrides": { "a": "1", "b": "2" } }
+      ]
+    },
+    {
+      "name": "a lower tamp wins the position and the origin",
+      "spec": {
+        "parts": [
+          { "type": "trace_cloth", "tamps": [ { "x": 5.0, "y": 5.0, "z": 0.5, "type": 3 } ] },
+          { "type": "print", "prinjection": [ { "x": 5.0, "y": 5.0, "z": 0.8 } ] }
+        ]
+      },
+      "expected": [
+        { "x": 5.0, "y": 5.0, "z": 0.5, "origin": "tamp3" }
+      ]
+    },
+    {
+      "name": "points 0.002 mm apart stay separate; non-type-3 tamps are ignored",
+      "spec": {
+        "parts": [
+          { "type": "pcb", "prinjection": [ { "x": 0.0, "y": 0.0, "z": 1.0 } ] },
+          {
+            "type": "trace_cloth",
+            "tamps": [
+              { "x": 0.002, "y": 0.0, "z": 1.2, "type": 3 },
+              { "x": 9.0, "y": 9.0, "z": 1.2, "type": 1 },
+              { "x": 7.0, "y": 7.0, "z": 1.2, "type": 0 }
+            ]
+          }
+        ]
+      },
+      "expected": [
+        { "x": 0.0, "y": 0.0, "z": 1.0, "origin": "prinjection" },
+        { "x": 0.002, "y": 0.0, "z": 1.2, "origin": "tamp3" }
+      ]
+    }
+  ]
+}

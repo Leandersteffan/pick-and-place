@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "printer": "snapmaker u1 (0.4 nozzle)",
+  "use_trace_braid": true,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 5.42,
+  "tray_origin": {
+    "x": 275.1705493413111,
+    "y": 76.5585193375,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 32.568051,
+        "y": 158.72861441111982,
+        "z": 22.01375561532646
+      },
+      "pick": {
+        "x": 184.3204,
+        "y": 174.8336656935,
+        "z": 4.870404036196894
+      },
+      "pause_layer": 288,
+      "length": 56.064123,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 32.568051,
+        "y": 130.696552,
+        "z": 22.01375561532646
+      },
+      "line_to": {
+        "x": 32.568051,
+        "y": 186.760676,
+        "z": 22.01375561532646
+      }
+    },
+    {
+      "type": "plug",
+      "place": {
+        "x": -19.24540008144306,
+        "y": 8.774459,
+        "z": 39.293027
+      },
+      "pick": {
+        "x": 96.0155143786,
+        "y": 56.380731765043144,
+        "z": 3.884
+      },
+      "pause_layer": 345,
+      "radius": 4.1708264638,
+      "height": 11.237514,
+      "overrides": {
+        "first_layer_speed": false
+      }
+    }
+  ]
+}

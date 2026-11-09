@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "printer": "mini",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 192.368018,
+        "y": 112.2154,
+        "z": 24.389249098986273
+      },
+      "pick": {
+        "x": 140.23349389838816,
+        "y": 194.7837,
+        "z": 2.205
+      },
+      "pause_layer": 379,
+      "length": 75.724,
+      "width": 2.2,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 192.368018,
+        "y": 74.3534,
+        "z": 24.389249098986273
+      },
+      "line_to": {
+        "x": 192.368018,
+        "y": 150.0774,
+        "z": 24.389249098986273
+      },
+      "tamps": [
+        {
+          "x": 16.8,
+          "y": -10.39,
+          "z": 26.724,
+          "type": 3,
+          "overrides": {
+            "tray_rotation": -7.8908,
+            "note": null,
+            "retract_length": false,
+            "nozzle_temperature": null
+          }
+        },
+        {
+          "x": 34.2441642098503,
+          "y": 15.2016160388,
+          "z": 29.2,
+          "type": 0
+        }
+      ],
+      "name": "insert 1"
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 108.4636736997,
+        "y": 130.5419921357952,
+        "z": 31.5
+      },
+      "pick": {
+        "x": 1.503989522,
+        "y": 91.3476060702,
+        "z": 3.7
+      },
+      "pause_layer": 164,
+      "length": 63.85,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 76.538674,
+        "y": 130.5419921357952,
+        "z": 31.5
+      },
+      "line_to": {
+        "x": 140.388674,
+        "y": 130.5419921357952,
+        "z": 31.5
+      },
+      "tamps": []
+    }
+  ]
+}

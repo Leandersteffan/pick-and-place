@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "printer": "xl",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 67.037,
+        "y": 60.329,
+        "z": 22.886978
+      },
+      "pick": {
+        "x": 50.3,
+        "y": 113.041171,
+        "z": 4.5
+      },
+      "pause_layer": 305,
+      "length": 22.24,
+      "width": 5.8,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 55.917,
+        "y": 60.329,
+        "z": 22.886978
+      },
+      "line_to": {
+        "x": 78.157,
+        "y": 60.329,
+        "z": 22.886978
+      },
+      "name": "trace B",
+      "slot": {
+        "x0": 6.54,
+        "y0": 75.0621,
+        "x1": 16.510533,
+        "y1": 115.943694
+      }
+    }
+  ]
+}

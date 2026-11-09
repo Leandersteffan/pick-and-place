@@ -1,0 +1,165 @@
+{
+  "version": 1,
+  "printer": "xl",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "plug",
+      "place": {
+        "x": 144.6043,
+        "y": 166.5056219629,
+        "z": 0.195
+      },
+      "pick": {
+        "x": 154.9541005778743,
+        "y": 75.8824961359,
+        "z": 6.537274151044057
+      },
+      "pause_layer": 333,
+      "radius": 6.646,
+      "height": 7.633618116
+    },
+    {
+      "type": "plug",
+      "place": {
+        "x": 95.4441935769,
+        "y": 28.4,
+        "z": 37.648804
+      },
+      "pause_layer": 106,
+      "radius": 7.66,
+      "height": 11.41,
+      "name": "\u00dc-plug"
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 177.548962,
+        "y": 278.1,
+        "z": 14.5195
+      },
+      "pause_layer": 368,
+      "length": 18.8456980914,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 177.548962,
+        "y": 268.677151,
+        "z": 14.5195
+      },
+      "line_to": {
+        "x": 177.548962,
+        "y": 287.522849,
+        "z": 14.5195
+      },
+      "name": "battery clip"
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 170.5837194238,
+        "y": 86.1,
+        "z": 0.5371629167
+      },
+      "pick": {
+        "x": 145.32,
+        "y": 118.52,
+        "z": 4.1476
+      },
+      "pause_layer": 306,
+      "length": 62.633,
+      "width": 5.451,
+      "height": 1.84,
+      "horizontal": true,
+      "line_from": {
+        "x": 139.267219,
+        "y": 86.1,
+        "z": 0.5371629167
+      },
+      "line_to": {
+        "x": 201.900219,
+        "y": 86.1,
+        "z": 0.5371629167
+      },
+      "tamps": [],
+      "overrides": {
+        "tray_rotation": 151.2,
+        "nozzle_temperature": 214.238363
+      }
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 270.7,
+        "y": 271.2476681161449,
+        "z": 38.5707
+      },
+      "pick": {
+        "x": 37.8295172889,
+        "y": 94.430096,
+        "z": -0.3
+      },
+      "pause_layer": 87,
+      "length": 65.3846032711,
+      "width": 3.69,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 270.7,
+        "y": 238.555366,
+        "z": 38.5707
+      },
+      "line_to": {
+        "x": 270.7,
+        "y": 303.93997,
+        "z": 38.5707
+      }
+    },
+    {
+      "type": "led",
+      "place": {
+        "x": 266.487,
+        "y": 240.8,
+        "z": 10.5145554998
+      },
+      "pick": {
+        "x": 170.28,
+        "y": 27.9,
+        "z": 1.268029558685907
+      },
+      "pause_layer": 119,
+      "length": 40.4,
+      "width": 2.8,
+      "height": 1.501,
+      "horizontal": false,
+      "line_from": {
+        "x": 266.487,
+        "y": 220.6,
+        "z": 10.5145554998
+      },
+      "line_to": {
+        "x": 266.487,
+        "y": 261.0,
+        "z": 10.5145554998
+      },
+      "tamps": [
+        {
+          "x": 272.7466060453,
+          "y": 27.3,
+          "z": 3.18,
+          "type": 0
+        }
+      ],
+      "name": "trace A"
+    }
+  ]
+}

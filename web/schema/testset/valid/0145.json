@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "printer": "prusa xl",
+  "use_trace_braid": true,
+  "housing": "housing.stl",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 202.175789,
+        "y": 258.11,
+        "z": 33.43
+      },
+      "pick": {
+        "x": 101.8934,
+        "y": 125.75049328018304,
+        "z": 1.7415955039
+      },
+      "pause_layer": 257,
+      "length": 70.3316945628,
+      "width": 4.738,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 167.009942,
+        "y": 258.11,
+        "z": 33.43
+      },
+      "line_to": {
+        "x": 237.341636,
+        "y": 258.11,
+        "z": 33.43
+      }
+    },
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 4.2668765524,
+        "y": 129.5136,
+        "z": 29.29
+      },
+      "pause_layer": 165,
+      "length": 69.229,
+      "width": 2.8,
+      "height": 0.7172,
+      "horizontal": false,
+      "line_from": {
+        "x": 4.2668765524,
+        "y": 94.8991,
+        "z": 29.29
+      },
+      "line_to": {
+        "x": 4.2668765524,
+        "y": 164.1281,
+        "z": 29.29
+      },
+      "tamps": [
+        {
+          "x": 86.947418,
+          "y": 98.5120340106,
+          "z": 28.1045177629,
+          "type": 2
+        },
+        {
+          "x": 27.418782918,
+          "y": 12.2,
+          "z": 3.627,
+          "type": 0
+        },
+        {
+          "x": 41.9,
+          "y": 57.8151,
+          "z": 29.43,
+          "type": 3,
+          "overrides": {
+            "note": "default"
+          }
+        }
+      ],
+      "overrides": {
+        "note": 44,
+        "nozzle_temperature": null,
+        "retract_length": 271
+      },
+      "slot": {
+        "x0": 178.69829,
+        "y0": 98.9395,
+        "x1": 229.19829,
+        "y1": 158.391308
+      }
+    }
+  ]
+}

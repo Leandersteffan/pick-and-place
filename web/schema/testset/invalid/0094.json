@@ -1,0 +1,69 @@
+{
+  "version": 3,
+  "printer": "prusa mini",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 7.006960441375478,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "plug",
+      "place": {
+        "x": 265.259596,
+        "y": 69.3563774214,
+        "z": 9.3
+      },
+      "pick": {
+        "x": 84.93392959403762,
+        "y": 161.088244,
+        "z": 1.0989
+      },
+      "pause_layer": 376,
+      "radius": 3.8946571347,
+      "height": 11.12,
+      "overrides": {
+        "wall_loops": null,
+        "fan_speed": ""
+      },
+      "slot": {
+        "x0": 79.9631516907,
+        "y0": 68.291985,
+        "x1": 114.43698,
+        "y1": 94.891985
+      },
+      "slot_shape": "circle"
+    },
+    {
+      "type": "plug",
+      "place": {
+        "x": 84.068955,
+        "y": 201.5316148573,
+        "z": 28.16
+      },
+      "pick": {
+        "x": 173.86,
+        "y": 198.4547,
+        "z": 6.4
+      },
+      "pause_layer": 348,
+      "radius": 2.121,
+      "height": 7.9,
+      "overrides": {
+        "note": "default"
+      },
+      "name": "\u00dc-plug",
+      "slot": {
+        "x0": 63.23,
+        "y0": 92.316961,
+        "x1": 76.441255,
+        "y1": 102.185288
+      },
+      "slot_shape": "circle"
+    }
+  ]
+}

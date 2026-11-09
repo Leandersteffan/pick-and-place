@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "printer": "xl",
+  "use_trace_braid": true,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 104.8556230988,
+    "y": 5.9,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "print",
+      "place": {
+        "x": 25.13,
+        "y": 123.361312,
+        "z": 0.9012964109
+      },
+      "pick": {
+        "x": 115.6,
+        "y": 95.583391,
+        "z": 22.8371882609
+      },
+      "pause_layer": 131,
+      "size": {
+        "x": 8.7376,
+        "y": 45.8361746871,
+        "z": 12.0
+      },
+      "bbox_center": {
+        "x": 175.9327,
+        "y": 118.88,
+        "z": 4.4402359908
+      },
+      "bbox_min": {
+        "x": 171.5639,
+        "y": 95.961913,
+        "z": -1.559764
+      },
+      "tray_offset": 2.0,
+      "mesh": "part-0.stl",
+      "pocket_depth": 2.6
+    }
+  ]
+}

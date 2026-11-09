@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "printer": "prusa mini",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "pcb",
+      "place": {
+        "x": 42.3,
+        "y": 29.61,
+        "z": 6.8504
+      },
+      "pick": {
+        "x": 50.9,
+        "y": 152.512,
+        "z": 19.944028312900578
+      },
+      "pause_layer": 334,
+      "size": {
+        "x": 38.7,
+        "y": 55.74,
+        "z": 2.8
+      },
+      "bbox_center": {
+        "x": 276.3,
+        "y": 160.324,
+        "z": 19.766392763186527
+      },
+      "bbox_min": {
+        "x": 256.95,
+        "y": 132.454,
+        "z": 18.366393
+      },
+      "tray_offset": 2.0,
+      "prinjection": [
+        {
+          "x": 256.4722985236,
+          "y": -2.5,
+          "z": 19.2602752894,
+          "overrides": {
+            "first_layer_speed": 83,
+            "fan_speed": null,
+            "wall_loops": 67.59
+          }
+        }
+      ],
+      "mesh": "part-0.stl",
+      "tamps": [
+        {
+          "x": 120.40280157814286,
+          "y": 8.8709,
+          "z": 14.143,
+          "type": 0,
+          "overrides": {
+            "wall_loops": "0.8",
+            "nozzle_temperature": "0.8"
+          }
+        }
+      ]
+    }
+  ]
+}

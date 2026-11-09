@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "printer": "prusa mini",
+  "use_trace_braid": true,
+  "housing": "housing.stl",
+  "tray": "generated",
+  "tray_spacing": 3.098,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 158.135,
+        "y": 98.98,
+        "z": 38.44
+      },
+      "pick": {
+        "x": 141.62,
+        "y": 121.517,
+        "z": 0.89
+      },
+      "pause_layer": 259,
+      "length": 89.87,
+      "width": 2.044905,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 158.135,
+        "y": 54.045,
+        "z": 38.44
+      },
+      "line_to": {
+        "x": 158.135,
+        "y": 143.915,
+        "z": 38.44
+      },
+      "tamps": [
+        {
+          "x": 178.61609485994904,
+          "y": -11.5,
+          "z": 0.1,
+          "type": 3
+        }
+      ]
+    }
+  ]
+}

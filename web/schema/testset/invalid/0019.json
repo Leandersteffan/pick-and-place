@@ -1,0 +1,102 @@
+{
+  "version": 3,
+  "printer": "mini",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 196.1931,
+        "y": 229.777716,
+        "z": 8.04
+      },
+      "pause_layer": 62,
+      "length": 71.593315,
+      "width": 2.8,
+      "height": 1.420896,
+      "horizontal": true,
+      "line_from": {
+        "x": 160.396442,
+        "y": 229.777716,
+        "z": 8.04
+      },
+      "line_to": {
+        "x": 231.989758,
+        "y": 229.777716,
+        "z": 8.04
+      }
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 209.0,
+        "y": 157.93,
+        "z": 2.5574
+      },
+      "pick": {
+        "x": 11.714,
+        "y": 137.50089981866697,
+        "z": 0.3411
+      },
+      "pause_layer": 341,
+      "length": 9.905944811100985,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 204.047028,
+        "y": 157.93,
+        "z": 2.5574
+      },
+      "line_to": {
+        "x": 213.952972,
+        "y": 157.93,
+        "z": 2.5574
+      },
+      "tamps": [
+        {
+          "x": 128.078,
+          "y": 119.842095,
+          "z": 8.8321743602,
+          "type": 2
+        },
+        {
+          "x": 151.22,
+          "y": 196.489708,
+          "z": 9.7,
+          "type": 2
+        },
+        {
+          "x": 2.2,
+          "y": 252.52,
+          "z": 10.587698648185636,
+          "type": 2
+        },
+        {
+          "x": 116.328,
+          "y": 147.6,
+          "z": 26.3,
+          "type": 3,
+          "overrides": {
+            "fan_speed": "on",
+            "note": null,
+            "wall_loops": true
+          }
+        }
+      ],
+      "overrides": {
+        "tray_rotation": -106.889,
+        "fan_speed": null,
+        "note": false
+      }
+    }
+  ]
+}

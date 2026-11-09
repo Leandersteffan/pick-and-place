@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "printer": "snapmaker u1 (0.4 nozzle)",
+  "use_trace_braid": true,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 1.87,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "plug",
+      "place": {
+        "x": 102.1,
+        "y": -7.605,
+        "z": 19.81
+      },
+      "pick": {
+        "x": 73.1205718712,
+        "y": 55.1,
+        "z": 1.644221
+      },
+      "pause_layer": 207,
+      "radius": 1.651,
+      "height": 1.948437,
+      "tamps": [
+        {
+          "x": 212.5585,
+          "y": 124.6082,
+          "z": 25.036154448869294,
+          "type": 1,
+          "overrides": {
+            "wall_loops": true,
+            "retract_length": 126
+          }
+        },
+        {
+          "x": -9.206,
+          "y": 75.4529,
+          "z": 28.484,
+          "type": 3
+        }
+      ],
+      "name": "\u00dc-plug",
+      "slot": {
+        "x0": 75.59,
+        "y0": 23.4959702158,
+        "x1": 84.5515,
+        "y1": 80.964532
+      },
+      "slot_shape": "circle"
+    }
+  ]
+}

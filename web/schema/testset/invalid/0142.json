@@ -1,0 +1,187 @@
+{
+  "version": 1,
+  "printer": "mini",
+  "use_trace_braid": true,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 8.95,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "pcb",
+      "place": {
+        "x": 274.8485,
+        "y": 266.804104,
+        "z": 11.972
+      },
+      "pick": {
+        "x": 31.118,
+        "y": 178.673148,
+        "z": 24.14
+      },
+      "pause_layer": 140,
+      "size": {
+        "x": 0.6125,
+        "y": 21.0,
+        "z": 7.468701
+      },
+      "bbox_center": {
+        "x": 126.2645,
+        "y": -1.6312,
+        "z": 7.45
+      },
+      "bbox_min": {
+        "x": 125.95825,
+        "y": -12.1312,
+        "z": 3.71565
+      },
+      "tray_offset": 1.717577,
+      "prinjection": [],
+      "mesh": "part-0.stl",
+      "overrides": {
+        "note": "default"
+      },
+      "name": "trace A",
+      "pocket": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "type": "plug",
+      "place": {
+        "x": 110.16,
+        "y": 245.43,
+        "z": 32.5
+      },
+      "pause_layer": 89,
+      "radius": 5.461631983568583,
+      "height": 6.881,
+      "tamps": [
+        {
+          "x": 111.326,
+          "y": 75.1,
+          "z": 16.49165178719354,
+          "type": 0
+        },
+        {
+          "x": 43.29932498614674,
+          "y": 121.1820243921,
+          "z": 19.821046511985987,
+          "type": 3,
+          "overrides": {
+            "nozzle_temperature": 252
+          }
+        }
+      ]
+    },
+    {
+      "type": "plug",
+      "place": {
+        "x": 272.67,
+        "y": 54.98,
+        "z": 11.74531
+      },
+      "pick": {
+        "x": 132.1724569621,
+        "y": 180.2623,
+        "z": 1.96
+      },
+      "pause_layer": 376,
+      "radius": 3.3,
+      "height": 4.4481,
+      "tamps": [
+        {
+          "x": 136.50576892705718,
+          "y": 139.5576686236,
+          "z": 19.38,
+          "type": 3,
+          "overrides": {
+            "retract_length": null,
+            "first_layer_speed": "",
+            "note": "fast"
+          }
+        },
+        {
+          "x": -14.777960735374112,
+          "y": 89.855942,
+          "z": 3.6861935871,
+          "type": 3
+        },
+        {
+          "x": 260.148,
+          "y": 209.4111824247,
+          "z": 12.8018,
+          "type": 2
+        },
+        {
+          "x": 113.9,
+          "y": 141.9,
+          "z": 15.219,
+          "type": 1
+        }
+      ],
+      "overrides": {
+        "wall_loops": null,
+        "retract_length": "",
+        "first_layer_speed": null
+      },
+      "name": "trace A",
+      "slot": {
+        "x0": 172.93,
+        "y0": 81.87,
+        "x1": 217.831,
+        "y1": 90.2195
+      },
+      "slot_shape": "circle"
+    },
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 134.7,
+        "y": -4.2,
+        "z": 16.046718
+      },
+      "pick": {
+        "x": 165.398,
+        "y": 22.36951715595652,
+        "z": -0.789
+      },
+      "pause_layer": 392,
+      "length": 2.605244334596928,
+      "width": 0.8372545774,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 134.7,
+        "y": -5.502622,
+        "z": 16.046718
+      },
+      "line_to": {
+        "x": 134.7,
+        "y": -2.897378,
+        "z": 16.046718
+      },
+      "tamps": [
+        {
+          "x": 257.13153,
+          "y": 12.5590833945,
+          "z": 13.433644,
+          "type": 3,
+          "overrides": {
+            "tray_rotation": "45",
+            "wall_loops": null,
+            "note": false,
+            "retract_length": null
+          }
+        }
+      ],
+      "name": "trace B"
+    }
+  ]
+}

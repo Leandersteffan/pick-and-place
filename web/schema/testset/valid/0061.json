@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "printer": "snapmaker u1",
+  "use_trace_braid": false,
+  "housing": "housing.stl",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 133.2,
+    "y": 268.406,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 145.992857362,
+        "y": 168.68,
+        "z": 38.44
+      },
+      "pick": {
+        "x": 179.157671,
+        "y": 92.8922092473,
+        "z": 1.126939
+      },
+      "pause_layer": 355,
+      "length": 65.3653306131,
+      "width": 2.8,
+      "height": 0.648634,
+      "horizontal": true,
+      "line_from": {
+        "x": 113.310192,
+        "y": 168.68,
+        "z": 38.44
+      },
+      "line_to": {
+        "x": 178.675522,
+        "y": 168.68,
+        "z": 38.44
+      },
+      "name": "\u00dc-plug",
+      "slot": {
+        "x0": 109.0471,
+        "y0": 31.500748085240538,
+        "x1": 151.701602,
+        "y1": 55.533186
+      }
+    }
+  ]
+}

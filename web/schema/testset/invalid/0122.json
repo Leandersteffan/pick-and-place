@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "printer": "xl",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "plug",
+      "place": {
+        "x": 121.9,
+        "y": "1.5",
+        "z": 38.536
+      },
+      "pause_layer": 219,
+      "radius": 7.58,
+      "height": 1.53,
+      "name": "insert 1"
+    },
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 163.5846255428,
+        "y": 40.5,
+        "z": 37.9
+      },
+      "pause_layer": 183,
+      "length": 9.7735676241,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 163.5846255428,
+        "y": 35.613216,
+        "z": 37.9
+      },
+      "line_to": {
+        "x": 163.5846255428,
+        "y": 45.386784,
+        "z": 37.9
+      },
+      "tamps": [
+        {
+          "x": 269.789,
+          "y": 166.47475204627386,
+          "z": 14.63,
+          "type": 3
+        }
+      ]
+    }
+  ]
+}

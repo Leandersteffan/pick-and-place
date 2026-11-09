@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "printer": "snapmaker u1",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 5.042,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "plug",
+      "place": {
+        "x": 199.778,
+        "y": 265.77,
+        "z": 13.04
+      },
+      "pause_layer": 315,
+      "radius": 4.4425,
+      "height": 5.6,
+      "tray_offset": 2.5
+    },
+    {
+      "type": "print",
+      "place": {
+        "x": 33.61,
+        "y": 25.47221421022133,
+        "z": 0.602
+      },
+      "pause_layer": 323,
+      "size": {
+        "x": 31.92,
+        "y": 38.8,
+        "z": 0.26
+      },
+      "bbox_center": {
+        "x": 87.89,
+        "y": 204.2625,
+        "z": 11.832805992628536
+      },
+      "bbox_min": {
+        "x": 71.93,
+        "y": 184.8625,
+        "z": 11.702806
+      },
+      "tray_offset": 2.0,
+      "mesh": "part-1.stl"
+    },
+    {
+      "type": "plug",
+      "place": {
+        "x": 208.68,
+        "y": 208.558354,
+        "z": 12.62
+      },
+      "pause_layer": 392,
+      "radius": 0.57810963207467,
+      "height": 1.3276,
+      "overrides": {
+        "tray_rotation": "-90",
+        "wall_loops": 151.4,
+        "nozzle_temperature": true,
+        "first_layer_speed": null
+      },
+      "name": "trace B"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "name": "pnp-web-app",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20.14.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit -p tsconfig.json && vite build",
+    "test": "vitest --run"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.0",
+    "@react-three/fiber": "^9.3.0",
+    "@tanstack/react-virtual": "^3.13.0",
+    "ajv": "^8.17.1",
+    "fflate": "^0.8.2",
+    "immer": "^10.1.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "three": "^0.179.0",
+    "zustand": "^5.0.6"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@types/three": "^0.179.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "fast-check": "^4.2.0",
+    "typescript": "~5.8.3",
+    "vite": "^6.4.1",
+    "vitest": "^3.2.4"
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "version": 1,
+  "printer": "prusa mini",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 9.616178448980673,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "plug",
+      "place": {
+        "x": -10.3,
+        "y": 243.6,
+        "z": 29.21987377789279
+      },
+      "pick": {
+        "x": 181.06387987763088,
+        "y": 2.809617,
+        "z": 6.2562
+      },
+      "pause_layer": 60,
+      "radius": 5.0974,
+      "height": 11.653,
+      "overrides": {
+        "retract_length": "on",
+        "fan_speed": 278
+      },
+      "slot": {
+        "x0": 142.7585142604,
+        "y0": 10.953,
+        "x1": 187.551514,
+        "y1": 56.94911
+      },
+      "slot_shape": "circle"
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 235.4,
+        "y": 103.0477980146,
+        "z": 3.00441
+      },
+      "pause_layer": 349,
+      "length": 37.19199849419704,
+      "width": 2.8,
+      "height": 0.13,
+      "horizontal": true,
+      "line_from": {
+        "x": 216.804001,
+        "y": 103.0477980146,
+        "z": 3.00441
+      },
+      "line_to": {
+        "x": 253.995999,
+        "y": 103.0477980146,
+        "z": 3.00441
+      },
+      "tamps": [
+        {
+          "x": 29.6,
+          "y": 16.547,
+          "z": 2.347,
+          "type": 0,
+          "overrides": {
+            "tray_rotation": -60.869,
+            "nozzle_temperature": false,
+            "fan_speed": null
+          }
+        },
+        {
+          "x": 98.8622,
+          "y": 208.78,
+          "z": 25.0327,
+          "type": 3
+        }
+      ]
+    }
+  ]
+}

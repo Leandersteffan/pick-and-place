@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "printer": "prusa xl",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 1.9,
+  "tray_origin": {
+    "y": 145.37,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 238.9,
+        "y": 192.52,
+        "z": 36.587027
+      },
+      "pause_layer": 51,
+      "length": 4.704091240909614,
+      "width": 4.149,
+      "height": 0.219162841272917,
+      "horizontal": false,
+      "line_from": {
+        "x": 238.9,
+        "y": 190.167954,
+        "z": 36.587027
+      },
+      "line_to": {
+        "x": 238.9,
+        "y": 194.872046,
+        "z": 36.587027
+      }
+    },
+    {
+      "type": "pcb",
+      "place": {
+        "x": 184.6419,
+        "y": -7.989811,
+        "z": 33.94259318997698
+      },
+      "pick": {
+        "x": 64.45,
+        "y": 133.8320869282,
+        "z": 20.47
+      },
+      "pause_layer": 101,
+      "size": {
+        "x": 47.6546297069,
+        "y": 32.67,
+        "z": 13.1196150308
+      },
+      "bbox_center": {
+        "x": -2.1,
+        "y": 56.0,
+        "z": 2.47649
+      },
+      "bbox_min": {
+        "x": -25.927315,
+        "y": 39.665,
+        "z": -4.083318
+      },
+      "tray_offset": 2.0,
+      "prinjection": [],
+      "mesh": "part-1.stl"
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "version": 1,
+  "printer": "xl",
+  "use_trace_braid": true,
+  "housing": "housing.stl",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 11.163183196311905,
+    "y": 118.079628,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "print",
+      "place": {
+        "x": 157.57,
+        "y": 226.410715,
+        "z": 15.893626
+      },
+      "pause_layer": 160,
+      "size": {
+        "x": 32.9,
+        "y": 21.1,
+        "z": 17.973552
+      },
+      "bbox_center": {
+        "x": 169.08161376763516,
+        "y": 46.235237,
+        "z": 6.999703700761588
+      },
+      "bbox_min": {
+        "x": 152.631614,
+        "y": 35.685237,
+        "z": -1.987072
+      },
+      "tray_offset": 1.6298,
+      "mesh": "part-0.stl",
+      "overrides": {
+        "tray_rotation": "-90",
+        "retract_length": null,
+        "fan_speed": false,
+        "nozzle_temperature": "210"
+      }
+    },
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": -14.21,
+        "y": 165.793,
+        "z": 23.9930080271
+      },
+      "pause_layer": 324,
+      "length": 88.4,
+      "width": 2.8,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": -58.41,
+        "y": 165.793,
+        "z": 23.9930080271
+      },
+      "line_to": {
+        "x": 29.99,
+        "y": 165.793,
+        "z": 23.9930080271
+      }
+    },
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 149.0,
+        "y": 58.891146271860435,
+        "z": 21.1286943171
+      },
+      "pick": {
+        "x": 62.34,
+        "y": 48.309386662,
+        "z": 0.76
+      },
+      "pause_layer": 357,
+      "length": 70.930072,
+      "width": 2.8779350626,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 113.534964,
+        "y": 58.891146271860435,
+        "z": 21.1286943171
+      },
+      "line_to": {
+        "x": 184.465036,
+        "y": 58.891146271860435,
+        "z": 21.1286943171
+      },
+      "tamps": [
+        {
+          "x": 237.7825,
+          "y": 256.498,
+          "z": 1.213035,
+          "type": 1
+        },
+        {
+          "x": 183.3729,
+          "y": 37.4,
+          "z": 15.947091,
+          "type": 1,
+          "overrides": {
+            "nozzle_temperature": "0.8",
+            "retract_length": 214,
+            "note": false
+          }
+        },
+        {
+          "x": 197.7,
+          "y": 16.633042,
+          "z": 4.18,
+          "type": 0,
+          "overrides": {
+            "wall_loops": false,
+            "retract_length": false
+          }
+        },
+        {
+          "x": 51.92,
+          "y": -5.670732,
+          "z": -0.14,
+          "type": 3
+        }
+      ],
+      "name": "switch"
+    },
+    {
+      "type": "print",
+      "place": {
+        "x": 107.234,
+        "y": 22.7274354439091,
+        "z": 19.62113068973233
+      },
+      "pause_layer": 79,
+      "size": {
+        "x": 30.763569,
+        "y": 59.688,
+        "z": 13.63
+      },
+      "bbox_center": {
+        "x": 180.8631216855,
+        "y": 97.3916,
+        "z": 11.996
+      },
+      "bbox_min": {
+        "x": 165.481337,
+        "y": 67.5476,
+        "z": 5.181
+      },
+      "tray_offset": 2.0,
+      "prinjection": [],
+      "mesh": "part-3.stl"
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "printer": "xl",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 8.7381434441,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_braid",
+      "place": {
+        "x": 266.57,
+        "y": 168.6,
+        "z": 3.1
+      },
+      "pick": {
+        "x": 5.065824683864673,
+        "y": 75.8751,
+        "z": 0.967
+      },
+      "pause_layer": 265,
+      "length": 43.7086,
+      "width": 2.21,
+      "height": 0.945,
+      "horizontal": true,
+      "line_from": {
+        "x": 244.7157,
+        "y": 168.6,
+        "z": 3.1
+      },
+      "line_to": {
+        "x": 288.4243,
+        "y": 168.6,
+        "z": 3.1
+      },
+      "overrides": {
+        "tray_rotation": -14.332,
+        "wall_loops": 133.1837
+      }
+    },
+    {
+      "type": "pcb",
+      "place": {
+        "x": 157.5101,
+        "y": 7.7279,
+        "z": 7.188
+      },
+      "pause_layer": 96,
+      "size": {
+        "x": 15.14148,
+        "y": 53.879,
+        "z": 11.906497930443525
+      },
+      "bbox_center": {
+        "x": 186.872956,
+        "y": 12.6,
+        "z": 16.6
+      },
+      "bbox_min": {
+        "x": 179.302216,
+        "y": -14.3395,
+        "z": 10.646751
+      },
+      "tray_offset": 2.0,
+      "prinjection": [
+        {
+          "x": 274.8923859579,
+          "y": 206.5,
+          "z": 13.861
+        }
+      ],
+      "mesh": "part-1.stl",
+      "tamps": []
+    },
+    {
+      "type": "print",
+      "place": {
+        "x": 44.93,
+        "y": 125.7519,
+        "z": 12.29
+      },
+      "pick": {
+        "x": 82.0528,
+        "y": 6.51,
+        "z": 19.72
+      },
+      "pause_layer": 96,
+      "size": {
+        "x": 26.91,
+        "y": 47.960025898,
+        "z": 16.421
+      },
+      "bbox_center": {
+        "x": 86.944996,
+        "y": 47.27812764394436,
+        "z": 15.247296
+      },
+      "bbox_min": {
+        "x": 73.489996,
+        "y": 23.298115,
+        "z": 7.036796
+      },
+      "tray_offset": 2.0,
+      "mesh": "part-2.stl",
+      "overrides": {
+        "tray_rotation": "12.5",
+        "wall_loops": 46
+      }
+    }
+  ]
+}

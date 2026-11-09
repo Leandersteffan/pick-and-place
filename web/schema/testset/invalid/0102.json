@@ -1,0 +1,137 @@
+{
+  "version": 1,
+  "printer": "mini",
+  "use_trace_braid": false,
+  "housing": true,
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 111.09366737,
+        "y": 64.893,
+        "z": 34.4
+      },
+      "pause_layer": 25,
+      "length": 86.564,
+      "width": 1.512079171879488,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 67.811667,
+        "y": 64.893,
+        "z": 34.4
+      },
+      "line_to": {
+        "x": 154.375667,
+        "y": 64.893,
+        "z": 34.4
+      }
+    },
+    {
+      "type": "pcb",
+      "place": {
+        "x": 252.5563,
+        "y": 220.6197,
+        "z": 9.0
+      },
+      "pause_layer": 223,
+      "size": {
+        "x": 46.353884,
+        "y": 40.87884052237156,
+        "z": 3.0
+      },
+      "bbox_center": {
+        "x": 160.538,
+        "y": 82.997583,
+        "z": 19.521
+      },
+      "bbox_min": {
+        "x": 137.361058,
+        "y": 62.558163,
+        "z": 18.021
+      },
+      "tray_offset": 1.1,
+      "prinjection": [
+        {
+          "x": 53.1728,
+          "y": 98.8673748408,
+          "z": 18.3445
+        },
+        {
+          "x": 81.6186,
+          "y": 245.843681546,
+          "z": 19.02
+        }
+      ],
+      "mesh": "part-1.stl"
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 48.04960832944771,
+        "y": 120.5577,
+        "z": 25.0196
+      },
+      "pick": {
+        "x": 5.73,
+        "y": 148.92927178144666,
+        "z": 0.55978
+      },
+      "pause_layer": 72,
+      "length": 28.47,
+      "width": 5.3868750329,
+      "height": 0.2,
+      "horizontal": false,
+      "line_from": {
+        "x": 48.04960832944771,
+        "y": 106.3227,
+        "z": 25.0196
+      },
+      "line_to": {
+        "x": 48.04960832944771,
+        "y": 134.7927,
+        "z": 25.0196
+      },
+      "tamps": [
+        {
+          "x": -16.0883663105,
+          "y": 258.088,
+          "z": -2.9637,
+          "type": 0,
+          "overrides": {
+            "tray_rotation": "90",
+            "note": 106.891995
+          }
+        },
+        {
+          "x": 128.69,
+          "y": 255.2,
+          "z": 20.5,
+          "type": 3,
+          "overrides": {
+            "tray_rotation": 118.882,
+            "retract_length": 203,
+            "nozzle_temperature": 273.4204
+          }
+        },
+        {
+          "x": 146.4656,
+          "y": 226.9943958371,
+          "z": 8.5271607069921,
+          "type": 1
+        }
+      ],
+      "overrides": {
+        "nozzle_temperature": null
+      },
+      "name": "trace A"
+    }
+  ]
+}

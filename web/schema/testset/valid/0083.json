@@ -1,0 +1,117 @@
+{
+  "version": 1,
+  "printer": "prusa xl",
+  "use_trace_braid": false,
+  "housing": "housing.3mf",
+  "tray": "generated",
+  "tray_spacing": 3.0,
+  "tray_origin": {
+    "x": 20.4594193443,
+    "y": 165.322,
+    "z": 0.0
+  },
+  "parts": [
+    {
+      "type": "print",
+      "place": {
+        "x": -11.49,
+        "y": 205.94317795407423,
+        "z": 19.055684
+      },
+      "pause_layer": 279,
+      "size": {
+        "x": 52.093,
+        "y": 7.8399,
+        "z": 1.3509808044
+      },
+      "bbox_center": {
+        "x": 0.9,
+        "y": 259.1,
+        "z": 16.5
+      },
+      "bbox_min": {
+        "x": -25.1465,
+        "y": 255.18005,
+        "z": 15.82451
+      },
+      "tray_offset": 3.3,
+      "mesh": "part-0.stl"
+    },
+    {
+      "type": "plug",
+      "place": {
+        "x": 71.2893529919572,
+        "y": 117.7,
+        "z": 13.56
+      },
+      "pause_layer": 146,
+      "radius": 4.04,
+      "height": 2.286,
+      "overrides": {
+        "nozzle_temperature": null,
+        "retract_length": "210",
+        "fan_speed": null
+      },
+      "name": ""
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 15.8,
+        "y": 53.442,
+        "z": 39.2
+      },
+      "pick": {
+        "x": 115.098374,
+        "y": 49.633827,
+        "z": 1.732999943401029
+      },
+      "pause_layer": 108,
+      "length": 32.4358,
+      "width": 2.8,
+      "height": 1.69,
+      "horizontal": true,
+      "line_from": {
+        "x": -0.4179,
+        "y": 53.442,
+        "z": 39.2
+      },
+      "line_to": {
+        "x": 32.0179,
+        "y": 53.442,
+        "z": 39.2
+      }
+    },
+    {
+      "type": "trace_cloth",
+      "place": {
+        "x": 199.7585568313398,
+        "y": 177.4,
+        "z": 16.33999
+      },
+      "pause_layer": 339,
+      "length": 24.754144912987275,
+      "width": 1.12,
+      "height": 0.2,
+      "horizontal": true,
+      "line_from": {
+        "x": 187.381485,
+        "y": 177.4,
+        "z": 16.33999
+      },
+      "line_to": {
+        "x": 212.135629,
+        "y": 177.4,
+        "z": 16.33999
+      },
+      "tamps": [
+        {
+          "x": 56.141,
+          "y": 77.886,
+          "z": 22.551694742733233,
+          "type": 2
+        }
+      ]
+    }
+  ]
+}
