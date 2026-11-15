@@ -43,7 +43,7 @@ More detail is in [docs/PROJECT.md](docs/PROJECT.md).
 
 ## To run a slice
 
-Rhino with Grasshopper, Python 3 with `manifold3d` (`py -3 -m pip install manifold3d`), and [OrcaSlicer](https://github.com/SoftFever/OrcaSlicer) for the Snapmaker U1. PrusaSlicer is used when the selected printer is a Prusa.
+Rhino with Grasshopper, Python 3 with `manifold3d` (`py -3 -m pip install manifold3d`), and [OrcaSlicer](https://github.com/SoftFever/OrcaSlicer). The Python and Orca paths are in `machine.json`.
 
 ## Credit
 

@@ -13,23 +13,19 @@ import difflib
 import os
 import shutil
 import subprocess
-import sys
-from pathlib import Path
 
 import pytest
 
+import machine_config
 from pnp_server.normalize import normalize_gcode
 
-ORCA_EXE = Path(r"C:\Program Files\OrcaSlicer\orca-slicer.exe")
 FIXTURE_INPUTS = ("spec.json", "housing.3mf", "part-2.stl")
 STRIPPED_ENV = ("PYTHONHOME", "PYTHONPATH", "PYTHONNOUSERSITE", "PYTHONSTARTUP", "PYTHONSAFEPATH")
 
 
-def _python_cmd():
-    launcher = shutil.which("py")
-    if launcher:
-        return [launcher, "-3.10"]
-    return [sys.executable]
+def _python_cmd(project_dir):
+    machine = machine_config.load_machine(str(project_dir))
+    return [machine_config.tool_path(machine, "python")]
 
 
 def _clean_env():
@@ -46,14 +42,13 @@ def test_normalize_removes_only_timestamp_line():
 
 
 @pytest.mark.orca
-@pytest.mark.skipif(not ORCA_EXE.exists(), reason="OrcaSlicer exe not installed")
 def test_rhino_path_identical(tmp_path, fixture_dir, designer_dir):
     spec_dir = tmp_path / "spec"
     spec_dir.mkdir()
     for name in FIXTURE_INPUTS:
         shutil.copyfile(fixture_dir / name, spec_dir / name)
 
-    cmd = _python_cmd() + ["-m", "pipeline", str(spec_dir), "--project", str(designer_dir)]
+    cmd = _python_cmd(designer_dir) + ["-m", "pipeline", str(spec_dir), "--project", str(designer_dir)]
     proc = subprocess.run(
         cmd,
         cwd=str(designer_dir / "Scripts"),

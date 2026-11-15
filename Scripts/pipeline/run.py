@@ -6,7 +6,7 @@ import sys
 
 from pipeline.assemble import Part, assemble
 from pipeline.geometry import housing_clearance, mesh_bounds, rewrite_bed_mesh, shared_bed_shift, shift_layer_moves, slicer_shift
-from pipeline.slicer import is_u1, printer_setup, resolve_orca, resolve_prusa, slice_model
+from pipeline.slicer import is_u1, printer_setup, slice_model
 from pipeline.traygen import ensure_pick_points, write_tray
 
 
@@ -34,13 +34,12 @@ def run(spec_dir, project_dir):
     spec, housing = load_spec(spec_dir)
     output_dir = os.path.dirname(spec_dir)
     file_prefix, wipe_location, retract_amount, use_orca = printer_setup(spec.get("printer", ""))
-    slicer_path = resolve_orca(project_dir) if use_orca else resolve_prusa()
-    if not slicer_path:
-        which = "OrcaSlicer" if use_orca else "PrusaSlicer"
-        raise RuntimeError(which + " was not found in Program Files.")
+    import machine_config
+    machine = machine_config.load_machine(project_dir)
+    slicer_path = machine_config.tool_path(machine, "orca")
 
     print("Spec: " + os.path.join(spec_dir, "spec.json"))
-    print(("OrcaSlicer: " if use_orca else "PrusaSlicer: ") + slicer_path)
+    print("OrcaSlicer: " + slicer_path)
 
     bounds = mesh_bounds(housing)
     ensure_pick_points(spec, bounds)

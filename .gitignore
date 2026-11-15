@@ -10,3 +10,4 @@ web/**/dist/
 web/server/.tmp/
 .pytest_cache/
 .hypothesis/
+machine.json

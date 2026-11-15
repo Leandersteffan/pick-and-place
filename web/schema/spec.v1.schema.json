@@ -14,7 +14,7 @@
     },
     "printer": {
       "type": "string",
-      "description": "Printer name from the Grasshopper 'printer' input, trimmed and lower-cased, for example 'snapmaker u1', 'prusa xl', 'mini'. Selects OrcaSlicer (U1) or PrusaSlicer and the printer config."
+      "description": "Printer name from the Grasshopper 'printer' input, trimmed and lower-cased, for example 'snapmaker u1', 'prusa xl', 'mini'. It selects temperatures, wipe, and firmware. Slicing is always OrcaSlicer."
     },
     "use_trace_braid": {
       "type": "boolean",

@@ -4,7 +4,7 @@ This is the handbook for the project. Read it before changing code. The short pa
 
 The printer builds an object that is already assembled. It prints a housing, pauses, picks traces and components off a tray, and places them into the housing. A trace and an LED are different moves. A successful print that lights was made when the tray, the slicing, and the printer file all still lived inside Grasshopper. That state is tag `v1`.
 
-Rhino still designs the part. The printed tray, the slicing, and the one printer file are built by `Scripts/pipeline`, a normal Python program. That split is so the part that used to be locked inside Grasshopper can be open source, and so the tool can later run from our own frontend. The frontend is not built. Do not start one until the spec below has been discussed with Oliver.
+Rhino still designs the part. The printed tray, the slicing, and the one printer file are built by `Scripts/pipeline`, a normal Python program. A page under `web/` loads a finished project, including `combined_output.gcode`, and shows the housing, the tray, and the toolpath. It does not replace Rhino, and it does not send a print. From `web/app`, run `npm install` and `npm run dev`, open http://127.0.0.1:5173, and press Load demo. Regenerating a slice from that page needs `py -3 -m uvicorn pnp_server.app:app --host 127.0.0.1 --port 8765` from `web/server`.
 
 ## Where the work is
 
@@ -18,10 +18,11 @@ Its remote is https://github.com/Leandersteffan/pick-and-place on branch `main`.
 | --- | --- |
 | Tag `v1`, commit `0d1d4bc` | The Grasshopper-only version that printed. Message: "Lead the README with pick-and-place." Do not move this tag. |
 | Commit `f911fe9` | "Move the tray and the slicing out of Grasshopper." The outside pipeline, before the script cleanup. |
-| Tag `v2`, commit `5d1acf5` | "Clean up old copies of the Grasshopper scripts." Current `main`. |
+| Tag `v2`, commit `5d1acf5` | "Clean up old copies of the Grasshopper scripts." Do not move this tag. |
+| Commit `32af4c1` | "Add a page that shows the combined gcode." The page, the schema, `output/`, and `report.py`. Current `main`. |
 | `First Task till week 2\Designer\Designer` | A folder that still holds the `v1` files. Leave it. Do not edit it and do not push from it. |
-| `pick-and-place-old` | The renamed first GitHub repo. Do not push there. |
-| `pick-and-place-v2` | A spare public copy from before this repo held both tags. This folder does not track it. |
+
+`pick-and-place-old` and `pick-and-place-v2` were deleted. Do not recreate them. Do not push anywhere except this repo.
 
 `output/` is in the repository, including `combined_output.gcode` and `spec/spec.json`. Slice replaces that folder on the machine that runs it.
 
@@ -31,7 +32,7 @@ Only Leander Steffan `<lenniekeris@gmail.com>` may be the author and committer. 
 
 Open `Designer export life.gh` in this folder. Press Slice. One press writes `output/combined_output.gcode`. There is no second program to run by hand.
 
-`Designer export life.gh` is the Grasshopper file in this repo. Solving an older save copies its scripts back over `Scripts/`.
+`Designer export life.gh` is the Grasshopper file in this repo. On 14 Nov 2026 the ghx was saved over it. Solving an older save, including a file from `Backups/`, copies its scripts back over `Scripts/`.
 
 ScriptParasite stores each Grasshopper script as `{NickName}-{yyMMdd}_{first 5 of the component guid}`. The newest date wins. The live files are:
 
@@ -42,7 +43,7 @@ ScriptParasite stores each Grasshopper script as `{NickName}-{yyMMdd}_{first 5 o
 | `Scripts/C_-261103_83c2c.cs` | Companion C# on the same canvas. |
 | `Scripts/Grid-261103_6b5ad.cs` | Construction grid. |
 
-The ghx embed is what a cold open loads. After changing `Py3-261103_1b2fe.py`, the ghx has to carry the same script, or the next cold open restores the old button. A commit of `Scripts/` does not update the file Rhino opens.
+The text copy is `Getting logik out of Grasshoper\Designer export ghx.ghx`, one level above this repo, out of git. Its embedded Slice script is the same text as `Scripts/Py3-261103_1b2fe.py`. On 14 Nov 2026 that ghx was saved over `Designer export life.gh`. After changing the Python file, both Grasshopper files have to carry the same script, or the next solve restores the old button. A commit of `Scripts/` does not update the file Rhino opens. The housing has to be one closed solid on the layer `Default`.
 
 The C# tray preview is not the tray that is printed. It still has to stay. Every solve builds the traces, the pause layers, and the pick points that Slice writes into the spec. The Python program builds a second tray, and that one is sliced.
 
@@ -56,9 +57,9 @@ The C# tray preview is not the tray that is printed. It still has to stay. Every
    - `output/spec/housing.step` (often a tiny empty file; STEP export skips meshes; the warning is harmless)
    - `output/spec/spec.json`
    - `output/spec/part-{index}.stl` for every `pcb` and `print`, with `"mesh"` set on that part
-4. It starts system Python, not Rhino's Python. It looks for `%LOCALAPPDATA%\Programs\Python\Python310\python.exe`, then 311, 312, 313, then `py -3`. It removes `PYTHONHOME`, `PYTHONPATH`, `PYTHONNOUSERSITE`, `PYTHONSTARTUP`, and `PYTHONSAFEPATH` from the child. If Rhino's environment leaks in, the tray step dies and no combined file appears.
+4. It starts the Python named in `machine.json`, not Rhino's Python. It removes `PYTHONHOME`, `PYTHONPATH`, `PYTHONNOUSERSITE`, `PYTHONSTARTUP`, and `PYTHONSAFEPATH` from the child. If Rhino's environment leaks in, the tray step dies and no combined file appears.
 5. The command is `python.exe -m pipeline <spec folder> --project <designer folder>`, with cwd `Scripts`. Stdout and stderr go to `output/slice_log.txt`.
-6. The pipeline builds `output/spec/tray.stl`, slices the tray and the housing, shifts the toolpaths back onto the bed, and writes `output/combined_output.gcode`.
+6. The pipeline builds `output/spec/tray.stl`, slices the tray and the housing with Orca, shifts the toolpaths back onto the bed when the printer name is a Snapmaker U1, and writes `output/combined_output.gcode`.
 7. On success the button prints `Process Complete. Final G-Code saved in output folder.`
 
 Run the same job from a terminal, from the `Scripts` folder:
@@ -75,24 +76,27 @@ The pipeline refuses a spec whose `version` is not `1`.
 | --- | --- |
 | `Scripts/pipeline/run.py` | Load the spec, lay out the tray, slice, shift, assemble. |
 | `Scripts/pipeline/traygen.py` | The printed tray, and the pick points written back onto the spec. |
-| `Scripts/pipeline/slicer.py` | Orca for a Snapmaker U1, Prusa otherwise. |
+| `Scripts/pipeline/slicer.py` | Orca only. The executable and the machine profile come from `machine.json`. |
 | `Scripts/pipeline/geometry.py` | Mesh bounds, Orca's centering shift, the 10 mm housing gap. |
 | `Scripts/pipeline/assemble.py` | Pause, cool, pick, place, tamp, prinjection. |
 | `Scripts/pipeline/settings.py` | Temperatures, offsets, wipe spots. This is the live table. |
 | `Scripts/gcode_writer.py` | Low-level gcode lines. The pipeline imports it. |
 
-U1 profile inside Orca: `Snapmaker U1 (0.4 nozzle)`. Process and filament files: `resources/u1/process.json` and `resources/u1/filament.json`. Orca is expected at `C:\Program Files\OrcaSlicer\orca-slicer.exe`. Bed limits used for the nudge are X 0.5–270.5 and Y 1.0–271. The U1 path sets the writer firmware to Klipper before the startup is copied. `manifold3d` must be installed for that same system Python: `py -3 -m pip install manifold3d`.
+The U1 machine profile is the file named by `orca_machine` in `machine.json`. Process and filament files: `resources/u1/process.json` and `resources/u1/filament.json`. Orca's executable is the `orca` path in that same file. Bed limits used for the nudge are X 0.5–270.5 and Y 1.0–271. A Snapmaker U1 name sets the writer firmware to Klipper before the startup is copied. `manifold3d` must be installed for the Python named in `machine.json`.
+
+`machine.json` is the only source for a program outside the Designer folder. Keys are `platform` (`windows` or `mac`), `python`, `orca`, and `orca_machine`. `platform` has to match this computer. There is no `prusa` key and no search of Program Files. `machine.json` is gitignored. `machine.example.json` is the template.
+
+Slicing is that Orca call for every printer name. The name still chooses the wipe, the retract, and the bed correction. A Snapmaker U1 name runs the centering shift, the 10 mm housing gap, Klipper, and copies Orca's own start. Any other name, including `prusa xl` and `prusa mini`, skips that shift and wraps the Orca gcode with `resources/gcode_snippets/`. Those snippets are not a slicer. `resources/XL_config.ini` and `resources/MINI_config.ini` are not loaded.
 
 Dependencies to have on the machine:
 
 - Rhino with Grasshopper
-- Python 3 with `manifold3d`
-- OrcaSlicer for a Snapmaker U1 print, first nozzle only
-- PrusaSlicer if the selected printer is a Prusa
+- Python 3 with `manifold3d`, the executable named by `python` in `machine.json`
+- OrcaSlicer, the executable named by `orca` in `machine.json`, and the machine profile named by `orca_machine`
 
 ## The spec
 
-`output/spec/spec.json` is the contract between the Grasshopper exporter and `Scripts/pipeline`. Version 1. There is no JSON Schema file yet. Oliver asked for one so design decisions can be discussed. Do not invent that schema, and do not change the fields Slice writes, until that conversation happens. Documenting the fields here is not a change to the file.
+`output/spec/spec.json` is the contract between the Grasshopper exporter and `Scripts/pipeline`. Version 1. The schema that describes that file as Slice writes it today is `web/schema/spec.v1.schema.json`. Do not rename or remove spec fields.
 
 Rhino writes the top level: `version`, `printer`, `use_trace_braid`, `housing`, `tray` (the string `"generated"`), `tray_spacing`, `tray_origin`, and `parts`.
 
@@ -122,7 +126,7 @@ Orca's `--slice 0` centers each mesh. After slicing, the shift is the extrusion 
 
 Picks use only that shared nudge. Places, tamps, and prinjection use the nudge plus the housing move.
 
-On a U1 slice, if the housing and the tray overlap in X and the housing's minimum Y is closer than the tray's maximum Y plus 10 mm, the housing gcode and the place moves shift in +Y until the gap is 10 mm. Picks stay on the tray. The Prusa path does not apply this extra Y. A design can be drawn with the box on top of the tray in Rhino. The printed file still separates them.
+On a U1 slice, if the housing and the tray overlap in X and the housing's minimum Y is closer than the tray's maximum Y plus 10 mm, the housing gcode and the place moves shift in +Y until the gap is 10 mm. Picks stay on the tray. A printer name that is not a Snapmaker U1 skips this extra Y and also skips the centering shift. The current spec is a U1, so both run. A design can be drawn with the box on top of the tray in Rhino. The printed file still separates them.
 
 ## The printer file
 
@@ -153,10 +157,10 @@ Do not "fix" a trace tamp that goes slightly below the bed. The printed part did
 | `Scripts/add_via.py` | A small Rhino command: place a point on the Traces layer. |
 | `Scripts/proj.csproj` | The C# project file for the Grasshopper scripts. |
 | `resources/Components/` | Parts the canvas can place. |
-| `resources/gcode_snippets/` | Prusa start and end blocks. |
+| `resources/gcode_snippets/` | Start and end blocks used when the printer name is not a Snapmaker U1. A U1 print copies Orca's own start instead. |
 | `resources/u1/` | U1 process and filament. |
 
-Inside `Py3-261103_1b2fe.py`, the old temperature table, the old bed-shift functions, and the `gcode_writer` import are leftovers. After the script writes the spec and starts the pipeline, it returns. Those leftovers do not run. Cutting them means editing the Grasshopper script and the ghx together. Do not do that as a drive-by cleanup.
+Inside `Py3-261103_1b2fe.py`, the old temperature table, the old bed-shift functions, and the `gcode_writer` import are leftovers. After the script writes the spec and starts the pipeline, it returns. Those leftovers do not run. Cutting them means editing the Grasshopper script and `Designer export life.gh` together. Do not do that as a drive-by cleanup.
 
 Also leave alone:
 
@@ -167,6 +171,8 @@ Also leave alone:
 
 ## What is not done
 
-Oliver asked for a schema of the spec between a front end and the backend, so later design talks have a fixed object. That schema has not been written, on purpose, until he says whether he means this `spec.json` or a new format. The frontend he was asked about waits on that answer.
+A Mac Rhino open has not been run. A `machine.json` whose `platform` is `mac` is rejected on this Windows machine, which is the check that exists here.
+
+`Designer export life.gh` in the repo was overwritten from the ghx on 14 Nov 2026. A later edit of `Scripts/Py3-261103_1b2fe.py` still has to be saved into both Grasshopper files.
 
 When Slice, the tray, the spec, the printer file, or the repositories change, update this file, `README.md`, and `AGENTS.md` in the same piece of work.

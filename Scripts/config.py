@@ -2,9 +2,8 @@
 Configuration parameters for Pick-and-Place printing system.
 """
 
-# Paths are resolved by the Grasshopper script from the file location.
-# PrusaSlicer is searched in Program Files unless the PRUSASLICER panel is filled in.
-SLICER_PATH = r"C:\Program Files\Prusa3D\PrusaSlicer\prusa-slicer-console.exe"
+# Program paths live in machine.json. This module is not on the Slice path.
+SLICER_PATH = ""
 MODULE_PATH = ""
 
 # --- WIPE LOCATIONS (X, Y, Z) ---

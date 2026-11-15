@@ -1,4 +1,4 @@
-"""Call OrcaSlicer or PrusaSlicer. No Rhino."""
+"""Call OrcaSlicer. The executable and the machine profile come from machine.json."""
 
 import os
 import shutil
@@ -25,28 +25,16 @@ def printer_setup(printer_name):
     return "", XL_WIPE_LOCATION, 0.5, False
 
 
+def _from_machine(project_dir, key):
+    import machine_config
+    return machine_config.tool_path(machine_config.load_machine(project_dir), key)
+
+
 def resolve_orca(project_dir):
-    program_files = os.environ.get("ProgramFiles", r"C:\Program Files")
-    candidates = [
-        os.path.join(program_files, "OrcaSlicer", "orca-slicer.exe"),
-        r"C:\Program Files\OrcaSlicer\orca-slicer.exe",
-    ]
-    for path in candidates:
-        if os.path.isfile(path):
-            return path
-    return None
-
-
-def resolve_prusa():
-    program_files = os.environ.get("ProgramFiles", r"C:\Program Files")
-    candidates = [
-        os.path.join(program_files, "Prusa3D", "PrusaSlicer", "prusa-slicer-console.exe"),
-        r"C:\Program Files\Prusa3D\PrusaSlicer\prusa-slicer-console.exe",
-    ]
-    for path in candidates:
-        if os.path.isfile(path):
-            return path
-    return None
+    try:
+        return _from_machine(project_dir, "orca")
+    except RuntimeError:
+        return None
 
 
 def gcode_has_layers(path):
@@ -57,24 +45,15 @@ def gcode_has_layers(path):
 
 
 def slice_model(slicer_path, use_orca, project_dir, file_prefix, input_file, output_file, output_dir):
-    if use_orca:
-        return _run_orca(slicer_path, project_dir, input_file, output_file, output_dir)
-    config_path = os.path.join(project_dir, "resources", "{}config.ini".format(file_prefix))
-    cmd = [slicer_path, "-s", "-g", "--load", config_path, "-o", output_file, input_file]
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    if result.stdout:
-        print(result.stdout)
-    if result.returncode != 0:
-        print(result.stderr)
-        print("PrusaSlicer failed on " + os.path.basename(input_file))
-    return result.returncode == 0 and gcode_has_layers(output_file)
+    return _run_orca(slicer_path, project_dir, input_file, output_file, output_dir)
 
 
 def _run_orca(slicer_path, project_dir, input_file, output_file, output_dir):
-    install = os.path.dirname(slicer_path)
-    machine = os.path.join(
-        install, "resources", "profiles", "Snapmaker", "machine", "Snapmaker U1 (0.4 nozzle).json"
-    )
+    try:
+        machine = _from_machine(project_dir, "orca_machine")
+    except RuntimeError as error:
+        print(str(error))
+        return False
     process = os.path.join(project_dir, "resources", "u1", "process.json")
     filament = os.path.join(project_dir, "resources", "u1", "filament.json")
     missing = [path for path in (machine, process, filament) if not os.path.isfile(path)]

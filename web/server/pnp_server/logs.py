@@ -8,7 +8,6 @@ MAX_LINES = 2000
 # A failure is reported with the stage of the last progress line seen.
 _STAGE_PREFIXES = (
     ("OrcaSlicer: ", "tray_layout"),
-    ("PrusaSlicer: ", "tray_layout"),
     ("Tray written to ", "slice_tray"),
     ("Slicing tray...", "slice_tray"),
     ("Slicing housing...", "slice_housing"),

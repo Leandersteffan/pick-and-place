@@ -9,11 +9,8 @@ import Rhino
 import System
 
 
-# Paths are resolved when this script runs.
-# Project folder: the folder that contains the Grasshopper file, if Scripts and resources sit beside it.
-# Override: the PROJECT ROOT panel, only when this file is saved somewhere else.
-# Slicer: PrusaSlicer for the Prusa machines, OrcaSlicer for the Snapmaker U1.
-# The PRUSASLICER panel can point at either exe. An empty panel uses the normal install folder.
+# Paths inside the Designer folder are found from this Grasshopper file.
+# Python and Orca are read from machine.json in that folder.
 XL_WIPE_LOCATION = (225, -8, 3)
 MINI_WIPE_LOCATION = (150, -3, 3)
 U1_WIPE_LOCATION = (220, 15, 3)
@@ -242,36 +239,18 @@ def resolve_project_root(path_input):
     return None
 
 
-def resolve_slicer(slicer_input):
-    typed = _as_text(slicer_input)
-    if typed and os.path.isfile(typed):
-        return typed
-    program_files = os.environ.get("ProgramFiles", r"C:\Program Files")
-    defaults = [
-        os.path.join(program_files, "Prusa3D", "PrusaSlicer", "prusa-slicer-console.exe"),
-        r"C:\Program Files\Prusa3D\PrusaSlicer\prusa-slicer-console.exe",
-    ]
-    for candidate in defaults:
-        if candidate and os.path.isfile(candidate):
-            return candidate
-    print("PrusaSlicer was not found. Install it, or paste the full path of prusa-slicer-console.exe into the PRUSASLICER panel.")
-    return None
+def _tool_from_machine(project_dir, key):
+    """A program path from machine.json. Nothing outside the Designer folder is searched."""
+    import machine_config
+    try:
+        return machine_config.tool_path(machine_config.load_machine(project_dir), key)
+    except RuntimeError as error:
+        print(str(error))
+        return None
 
 
-def resolve_orca(slicer_input):
-    typed = _as_text(slicer_input)
-    if typed and os.path.isfile(typed) and os.path.basename(typed).lower().startswith("orca-slicer"):
-        return typed
-    program_files = os.environ.get("ProgramFiles", r"C:\Program Files")
-    defaults = [
-        os.path.join(program_files, "OrcaSlicer", "orca-slicer.exe"),
-        r"C:\Program Files\OrcaSlicer\orca-slicer.exe",
-    ]
-    for candidate in defaults:
-        if candidate and os.path.isfile(candidate):
-            return candidate
-    print("OrcaSlicer was not found. Install it, or paste the full path of orca-slicer.exe into the PRUSASLICER panel.")
-    return None
+def resolve_orca(project_dir):
+    return _tool_from_machine(project_dir, "orca")
 
 
 def _is_u1(printer_name):
@@ -644,14 +623,12 @@ def _part_record(embeddable, use_trace_braid):
         record["prinjection"] = holes
     return record
 
-def _outside_python():
-    """The system Python that has the tray libraries. Rhino's own Python does not."""
-    local = os.environ.get("LOCALAPPDATA", "")
-    for version in ("Python310", "Python311", "Python312", "Python313"):
-        path = os.path.join(local, "Programs", "Python", version, "python.exe")
-        if os.path.isfile(path):
-            return [path]
-    return ["py", "-3"]
+def _outside_python(project_dir):
+    """The system Python named in machine.json. Rhino's own Python does not have the tray libraries."""
+    path = _tool_from_machine(project_dir, "python")
+    if not path:
+        return None
+    return [path]
 
 
 def _outside_env():
@@ -684,12 +661,12 @@ def process_print():
     printer_name = str(globals().get("printer", "")).strip().lower()
     use_orca = _is_u1(printer_name)
 
-    SLICER_PATH = resolve_orca(globals().get("slicer")) if use_orca else resolve_slicer(globals().get("slicer"))
+    SLICER_PATH = resolve_orca(project_dir)
     if not SLICER_PATH:
         return
 
     print("Project folder: " + project_dir)
-    print(("OrcaSlicer: " if use_orca else "PrusaSlicer: ") + SLICER_PATH)
+    print("OrcaSlicer: " + SLICER_PATH)
     
     # Determine file prefix, wipe location, and retraction amount based on printer type
     if use_orca:
@@ -907,7 +884,10 @@ def process_print():
     print("Wrote " + spec_path)
     print("Rhino exported the housing and the part list. The tray and the slicer run outside Grasshopper.")
 
-    command = _outside_python() + ["-m", "pipeline", spec_dir, "--project", project_dir]
+    python_cmd = _outside_python(project_dir)
+    if not python_cmd:
+        return
+    command = python_cmd + ["-m", "pipeline", spec_dir, "--project", project_dir]
     log_path = os.path.join(output_dir, "slice_log.txt")
     with open(log_path, "w", encoding="utf-8") as log:
         log.write(" ".join(command) + "\n")

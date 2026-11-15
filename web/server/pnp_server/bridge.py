@@ -69,13 +69,14 @@ def orca_path():
 
 
 def orca_candidates():
-    """The paths pipeline.slicer.resolve_orca checks, in order, so the UI can show where it looked."""
-    program_files = os.environ.get("ProgramFiles", r"C:\Program Files")
-    paths = [
-        os.path.join(program_files, "OrcaSlicer", "orca-slicer.exe"),
-        r"C:\Program Files\OrcaSlicer\orca-slicer.exe",
-    ]
-    return list(dict.fromkeys(paths))
+    """The Orca path named in machine.json."""
+    import machine_config
+    try:
+        data = machine_config.load_machine(str(DESIGNER))
+    except RuntimeError:
+        return []
+    text = str(data.get("orca") or "").strip()
+    return [text] if text else []
 
 
 def _rmtree_retry(path, tries=5, delay_s=0.2):
