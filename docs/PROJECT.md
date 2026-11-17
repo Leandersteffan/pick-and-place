@@ -19,7 +19,8 @@ Its remote is https://github.com/Leandersteffan/pick-and-place on branch `main`.
 | Tag `v1`, commit `0d1d4bc` | The Grasshopper-only version that printed. Message: "Lead the README with pick-and-place." Do not move this tag. |
 | Commit `f911fe9` | "Move the tray and the slicing out of Grasshopper." The outside pipeline, before the script cleanup. |
 | Tag `v2`, commit `5d1acf5` | "Clean up old copies of the Grasshopper scripts." Do not move this tag. |
-| Commit `32af4c1` | "Add a page that shows the combined gcode." The page, the schema, `output/`, and `report.py`. Current `main`. |
+| Commit `32af4c1` | "Add a page that shows the combined gcode." The page, the schema, `output/`, and `report.py`. |
+| Commit `7ed44d1` | "Read the program paths from machine.json. Tested and working on Windows." Current `main`. |
 | `First Task till week 2\Designer\Designer` | A folder that still holds the `v1` files. Leave it. Do not edit it and do not push from it. |
 
 `pick-and-place-old` and `pick-and-place-v2` were deleted. Do not recreate them. Do not push anywhere except this repo.
@@ -34,23 +35,25 @@ Open `Designer export life.gh` in this folder. Press Slice. One press writes `ou
 
 `Designer export life.gh` is the Grasshopper file in this repo. On 14 Nov 2026 the ghx was saved over it. Solving an older save, including a file from `Backups/`, copies its scripts back over `Scripts/`.
 
-ScriptParasite stores each Grasshopper script as `{NickName}-{yyMMdd}_{first 5 of the component guid}`. The newest date wins. The live files are:
+ScriptParasite stores each Grasshopper script as `{NickName}-{yyMMdd}_{first 5 of the component guid}`. The newest date wins. A solve on 17 Nov 2026 wrote the `261117` names. The live files are:
 
 | File | Role |
 | --- | --- |
-| `Scripts/Py3-261103_1b2fe.py` | Slice button. Exports the housing and `spec.json`, then starts the pipeline. Component guid starts with `1b2fe464`. |
-| `Scripts/C_-261103_3a356.cs` | Traces, pause layers, pick points, and the tray preview in the Rhino view. |
-| `Scripts/C_-261103_83c2c.cs` | Companion C# on the same canvas. |
-| `Scripts/Grid-261103_6b5ad.cs` | Construction grid. |
+| `Scripts/Py3-261117_1b2fe.py` | Slice button. Exports the housing and `spec.json`, then starts the pipeline. Component guid starts with `1b2fe464`. The text matches the `261103` and `261114` copies. |
+| `Scripts/C_-261117_3a356.cs` | Traces, pause layers, pick points, and the tray preview in the Rhino view. |
+| `Scripts/C_-261117_83c2c.cs` | Companion C# on the same canvas. |
+| `Scripts/Grid-261117_6b5ad.cs` | Construction grid. |
 
-The text copy is `Getting logik out of Grasshoper\Designer export ghx.ghx`, one level above this repo, out of git. Its embedded Slice script is the same text as `Scripts/Py3-261103_1b2fe.py`. On 14 Nov 2026 that ghx was saved over `Designer export life.gh`. After changing the Python file, both Grasshopper files have to carry the same script, or the next solve restores the old button. A commit of `Scripts/` does not update the file Rhino opens. The housing has to be one closed solid on the layer `Default`.
+The `261117` C# files differ from `261114` only by the ScriptParasite namespace date. The `261103` and `261114` copies are still in `Scripts/`.
+
+The text copy is `Getting logik out of Grasshoper\Designer export ghx.ghx`, one level above this repo, out of git. Its embedded Slice script is the same text as the Py3 file. On 14 Nov 2026 that ghx was saved over `Designer export life.gh`. After changing the newest Py3 file, both Grasshopper files have to carry the same script, or the next solve restores the old button. A commit of `Scripts/` does not update the file Rhino opens. The housing has to be one closed solid on the layer `Default`.
 
 The C# tray preview is not the tray that is printed. It still has to stay. Every solve builds the traces, the pause layers, and the pick points that Slice writes into the spec. The Python program builds a second tray, and that one is sliced.
 
 ## What a slice does
 
 1. Grasshopper designs. The C# above runs as usual.
-2. `Py3-261103_1b2fe.py` finds the project root: the folder that contains both `Scripts` and `resources`. It must find that folder from the Grasshopper document. Do not hardcode `c:\A\HPI\...`.
+2. The newest `Py3-261117_1b2fe.py` finds the project root: the folder that contains both `Scripts` and `resources`. It must find that folder from the Grasshopper document. Do not hardcode `c:\A\HPI\...`.
 3. It clears `output/` and writes:
    - `output/spec/housing.3mf` (this is what Orca slices)
    - `output/spec/housing.stl`
@@ -160,7 +163,7 @@ Do not "fix" a trace tamp that goes slightly below the bed. The printed part did
 | `resources/gcode_snippets/` | Start and end blocks used when the printer name is not a Snapmaker U1. A U1 print copies Orca's own start instead. |
 | `resources/u1/` | U1 process and filament. |
 
-Inside `Py3-261103_1b2fe.py`, the old temperature table, the old bed-shift functions, and the `gcode_writer` import are leftovers. After the script writes the spec and starts the pipeline, it returns. Those leftovers do not run. Cutting them means editing the Grasshopper script and `Designer export life.gh` together. Do not do that as a drive-by cleanup.
+Inside the newest Py3 file, the old temperature table, the old bed-shift functions, and the `gcode_writer` import are leftovers. After the script writes the spec and starts the pipeline, it returns. Those leftovers do not run. Cutting them means editing the Grasshopper script and `Designer export life.gh` together. Do not do that as a drive-by cleanup.
 
 Also leave alone:
 
@@ -171,8 +174,8 @@ Also leave alone:
 
 ## What is not done
 
-A Mac Rhino open has not been run. A `machine.json` whose `platform` is `mac` is rejected on this Windows machine, which is the check that exists here.
+Oliver opened the project on a Mac on 17 Nov 2026 and the slice ran. He had not installed the Human UI build for Mac, so the movable window did not appear. The printer name on `Py3` is fed by that window's list. Without the window that input is empty. A `machine.json` whose `platform` is `mac` is rejected on this Windows machine, which is the check that exists here.
 
-`Designer export life.gh` in the repo was overwritten from the ghx on 14 Nov 2026. A later edit of `Scripts/Py3-261103_1b2fe.py` still has to be saved into both Grasshopper files.
+`Designer export life.gh` in the repo was overwritten from the ghx on 14 Nov 2026. A later edit of the newest Py3 file still has to be saved into both Grasshopper files.
 
 When Slice, the tray, the spec, the printer file, or the repositories change, update this file, `README.md`, and `AGENTS.md` in the same piece of work.
