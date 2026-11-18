@@ -1,192 +1,13 @@
 import subprocess
 import os
 import shutil
-import re
 import sys
-import zipfile
 import json
 import Rhino
-import System
 
 
 # Paths inside the Designer folder are found from this Grasshopper file.
 # Python and Orca are read from machine.json in that folder.
-XL_WIPE_LOCATION = (225, -8, 3)
-MINI_WIPE_LOCATION = (150, -3, 3)
-U1_WIPE_LOCATION = (220, 15, 3)
-PART_START_Z_HOP = 30.0
-PART_START_EXTRA_PRIME = 0.25
-PLACE_HOVER_DWELL_TIME_MS = 0
-SLICER_PATH = ""
-MODULE_PATH = ""
-
-
-class _ShiftedPoint(object):
-    def __init__(self, x, y, z):
-        self.X = x
-        self.Y = y
-        self.Z = z
-
-
-def _moved(pt, shift):
-    return _ShiftedPoint(float(pt.X) + shift[0], float(pt.Y) + shift[1], float(pt.Z))
-
-
-def _mesh_center(path):
-    archive = zipfile.ZipFile(path)
-    text = ""
-    for name in archive.namelist():
-        if name.endswith(".model"):
-            text += archive.read(name).decode("utf-8", "replace")
-    verts = re.findall(r'vertex x="([^"]+)" y="([^"]+)" z="([^"]+)"', text)
-    if not verts:
-        return None
-    xs = [float(v[0]) for v in verts]
-    ys = [float(v[1]) for v in verts]
-    return ((min(xs) + max(xs)) / 2.0, (min(ys) + max(ys)) / 2.0)
-
-
-def _extrusion_center(path):
-    xs = []
-    ys = []
-    in_object = False
-    with open(path, "r", encoding="utf-8", errors="replace") as handle:
-        for line in handle:
-            if "; printing object" in line:
-                in_object = True
-                continue
-            if "; stop printing object" in line:
-                in_object = False
-                continue
-            if not in_object or not line.startswith("G1"):
-                continue
-            xm = re.search(r"\bX(-?(?:\d+\.?\d*|\.\d+))", line)
-            ym = re.search(r"\bY(-?(?:\d+\.?\d*|\.\d+))", line)
-            em = re.search(r"\bE(-?(?:\d+\.?\d*|\.\d+))", line)
-            if xm and ym and em and float(em.group(1)) > 0:
-                xs.append(float(xm.group(1)))
-                ys.append(float(ym.group(1)))
-    if len(xs) < 4:
-        return None
-    return ((min(xs) + max(xs)) / 2.0, (min(ys) + max(ys)) / 2.0)
-
-
-def _slicer_shift(mesh_path, gcode_path):
-    mesh = _mesh_center(mesh_path)
-    printed = _extrusion_center(gcode_path)
-    if mesh is None or printed is None:
-        return None
-    return (printed[0] - mesh[0], printed[1] - mesh[1])
-
-
-def _mesh_bounds(path):
-    archive = zipfile.ZipFile(path)
-    text = ""
-    for name in archive.namelist():
-        if name.endswith(".model"):
-            text += archive.read(name).decode("utf-8", "replace")
-    verts = re.findall(r'vertex x="([^"]+)" y="([^"]+)" z="([^"]+)"', text)
-    if not verts:
-        return None
-    xs = [float(v[0]) for v in verts]
-    ys = [float(v[1]) for v in verts]
-    return (min(xs), min(ys), max(xs), max(ys))
-
-
-# Snapmaker U1 printable area. A shared nudge keeps the Rhino gap and stays on the bed.
-_BED_MIN_X = 0.5
-_BED_MIN_Y = 1.0
-_BED_MAX_X = 270.5
-_BED_MAX_Y = 271.0
-_XY_WORD = re.compile(r"([XxYy])(-?(?:\d+\.?\d*|\.\d+))")
-
-
-def _shared_bed_shift(bounds):
-    minx = min(item[0] for item in bounds)
-    miny = min(item[1] for item in bounds)
-    maxx = max(item[2] for item in bounds)
-    maxy = max(item[3] for item in bounds)
-    dx = _BED_MIN_X - minx if minx < _BED_MIN_X else 0.0
-    dy = _BED_MIN_Y - miny if miny < _BED_MIN_Y else 0.0
-    if maxx + dx > _BED_MAX_X:
-        dx = _BED_MAX_X - maxx
-    if maxy + dy > _BED_MAX_Y:
-        dy = _BED_MAX_Y - maxy
-    if minx + dx < _BED_MIN_X - 0.05 or miny + dy < _BED_MIN_Y - 0.05:
-        return None
-    if maxx + dx > _BED_MAX_X + 0.05 or maxy + dy > _BED_MAX_Y + 0.05:
-        return None
-    return (dx, dy)
-
-
-def _shift_move_line(line, dx, dy):
-    ending = ""
-    body = line
-    if body.endswith("\r\n"):
-        body = body[:-2]
-        ending = "\r\n"
-    elif body.endswith("\n"):
-        body = body[:-1]
-        ending = "\n"
-    if not re.match(r"[Gg]0*([0-3])(?!\d)", body.lstrip()):
-        return line
-
-    def repl(match):
-        axis = match.group(1).upper()
-        value = float(match.group(2)) + (dx if axis == "X" else dy)
-        text = "{:.3f}".format(value).rstrip("0").rstrip(".")
-        if text in ("", "-", "-0"):
-            text = "0"
-        return match.group(1) + text
-
-    return _XY_WORD.sub(repl, body) + ending
-
-
-def _rewrite_bed_mesh(path, bounds, shift):
-    minx = min(item[0] for item in bounds) + shift[0]
-    miny = min(item[1] for item in bounds) + shift[1]
-    maxx = max(item[2] for item in bounds) + shift[0]
-    maxy = max(item[3] for item in bounds) + shift[1]
-    pad = 2.0
-    minx = max(_BED_MIN_X, minx - pad)
-    miny = max(_BED_MIN_Y, miny - pad)
-    maxx = min(_BED_MAX_X, maxx + pad)
-    maxy = min(_BED_MAX_Y, maxy + pad)
-    replacement = "mesh_min={:.3f},{:.3f} mesh_max={:.3f},{:.3f}".format(minx, miny, maxx, maxy)
-    with open(path, "r", encoding="utf-8", errors="replace", newline="") as handle:
-        lines = handle.readlines()
-    found = False
-    for index, line in enumerate(lines):
-        if line.startswith("BED_MESH_CALIBRATE"):
-            lines[index] = re.sub(
-                r"mesh_min=[-\d.]+,[-\d.]+ mesh_max=[-\d.]+,[-\d.]+",
-                replacement,
-                line,
-                count=1,
-            )
-            found = True
-            break
-    if not found:
-        return
-    with open(path, "w", encoding="utf-8", newline="") as handle:
-        handle.writelines(lines)
-
-
-def _shift_layer_moves(path, shift):
-    dx, dy = shift
-    if abs(dx) < 0.01 and abs(dy) < 0.01:
-        return
-    with open(path, "r", encoding="utf-8", errors="replace", newline="") as handle:
-        lines = handle.readlines()
-    start = next((i for i, line in enumerate(lines) if line.startswith(";LAYER_CHANGE")), None)
-    if start is None:
-        raise RuntimeError("No layer marker in " + os.path.basename(path))
-    end = next((i for i in range(start, len(lines)) if lines[i].startswith(";TYPE:Custom")), len(lines))
-    for index in range(start, end):
-        lines[index] = _shift_move_line(lines[index], dx, dy)
-    with open(path, "w", encoding="utf-8", newline="") as handle:
-        handle.writelines(lines)
-
 
 def _as_text(value):
     if value is None:
@@ -235,7 +56,7 @@ def resolve_project_root(path_input):
     for candidate in _project_candidates():
         if _is_project(candidate):
             return candidate
-    print("Project folder not found. Save this Grasshopper file inside the Designer folder (next to Scripts and resources), or paste that folder into the PROJECT ROOT panel.")
+    print("Project folder not found. Save this Grasshopper file inside the Designer folder, next to Scripts and resources.")
     return None
 
 
@@ -253,145 +74,6 @@ def resolve_orca(project_dir):
     return _tool_from_machine(project_dir, "orca")
 
 
-def _is_u1(printer_name):
-    return "u1" in printer_name or "snapmaker" in printer_name
-
-# --- PICK AND PLACE CONFIGURATION ---
-CONFIG = {
-    'trace_braid': {
-        # Pick parameters
-        'pick_z_offset': -0.06,          # Z offset below pick point (mm)
-        'pick_pre_extrude_amount': 1.0,  # Pre-extrusion before descending to pick (mm)
-        'pick_extrude_amount': 0.5,      # Extrusion during pick (mm)
-        'pick_extrude_feedrate': 100,    # Feedrate during pick extrusion (mm/min)
-        'pick_cool_temp': 160,           # Temperature to cool to for grabbing (°C)
-        
-        # Place parameters
-        'place_z_offset': -0.4,          # Final Z offset below place point (mm)
-        'place_heat_temp': 210,          # Temperature to heat to for release (°C)
-        'place_preheat_height': 0,       # Height above place point to pre-heat (mm) - 0 means at place point
-        'place_dwell_time': 1000,        # Dwell time after placement (ms)
-        
-        # Movement feedrates
-        'travel_feedrate': 6000,         # XY travel speed (mm/min)
-        'z_lift_feedrate': 1000,         # Z lift speed (mm/min)
-        'place_feedrate': 300,           # Z approach speed for placement (mm/min)
-    },
-    'trace_cloth': {
-        # Pick parameters
-        'pick_z_offset': -0.3,          # Z offset below pick point (mm)
-        'pick_pre_extrude_amount': 1.0,  # Pre-extrusion before descending to pick (mm)
-        'pick_extrude_amount': 0,      # Extrusion during pick (mm)
-        'pick_extrude_feedrate': 100,    # Feedrate during pick extrusion (mm/min)
-        'pick_cool_temp': 180,           # Temperature to cool to for grabbing (°C)
-        
-        # Place parameters
-        'place_z_offset': -0.3,          # Final Z offset below place point (mm)
-        'place_heat_temp': 210,          # Temperature to heat to for release (°C)
-        'place_preheat_height': 0,       # Height above place point to pre-heat (mm) - 0 means at place point
-        'place_dwell_time': 1000,        # Dwell time after placement (ms)
-        
-        # Movement feedrates
-        'travel_feedrate': 6000,         # XY travel speed (mm/min)
-        'z_lift_feedrate': 1000,         # Z lift speed (mm/min)
-        'place_feedrate': 300,           # Z approach speed for placement (mm/min)
-    },
-    'plug': {
-        # Pick parameters
-        'pick_z_offset': -0.65,          # Z offset below pick point (mm)
-        'pick_extrude_amount': 1.8,      # Extrusion during pick (mm)
-        'pick_extrude_feedrate': 100,    # Feedrate during pick extrusion (mm/min)
-        'pick_cool_temp': 140,           # Temperature to cool to for grabbing (°C)
-        
-        # Place parameters
-        'place_z_offset': -1.4,          # Final Z offset below place point (mm)
-        'place_heat_temp': 210,          # Temperature to heat to for release (°C)
-        'place_preheat_height': 0.25,    # Height above place point to pre-heat (mm)
-        'place_dwell_time': 1000,        # Dwell time after placement (ms)
-        
-        # Movement feedrates
-        'travel_feedrate': 6000,         # XY travel speed (mm/min)
-        'z_lift_feedrate': 1000,         # Z lift speed (mm/min)
-        'place_feedrate': 100,           # Z approach speed for placement (mm/min)
-    },
-    'pcb': {
-        # Pick parameters
-        'pick_z_offset': -0.45,          # Z offset below pick point (mm)
-        'pick_extrude_amount': 2.0,      # Extrusion during pick (mm)
-        'pick_extrude_feedrate': 200,    # Feedrate during pick extrusion (mm/min)
-        'pick_cool_temp': 100,           # Temperature to cool to for grabbing (°C) - colder for PCBs
-        
-        # Place parameters
-        'place_z_offset': -1.0,          # Final Z offset below place point (mm)
-        'place_heat_temp': 210,          # Temperature to heat to for release (°C)
-        'place_preheat_height': 0.25,    # Height above place point to pre-heat (mm)
-        'place_dwell_time': 1000,        # Dwell time after placement (ms)
-        'place_side_offset': 1.0,        # X offset to move aside after placement (mm)
-        
-        # Prinjection parameters
-        'prinjection': {
-            'hover_z_offset': 5.0,       # Height above point to hover before injecting (mm)
-            'inject_z_offset': -1.4,     # Z offset relative to point for extrusion (mm)
-            'swipe_z_offset': -0.4,      # Z offset relative to point to perform swipe (mm)
-            'extrude_amount': 0.5,       # Amount to extrude (mm)
-            'initial_extra_prime': 0.5,  # Extra unretract amount for the very first hole (mm)
-            'extrude_feedrate': 300,     # Feedrate for extrusion (mm/min)
-            'retract_amount': 3,         # Amount to retract after injection (mm)
-        },
-        
-        # Movement feedrates
-        'travel_feedrate': 6000,         # XY travel speed (mm/min)
-        'z_lift_feedrate': 1000,         # Z lift speed (mm/min)
-        'place_feedrate': 100,           # Z approach speed for placement (mm/min)
-    },
-    'print': {
-        # Pick parameters (PCB-like, but colder grab)
-        'pick_z_offset': -0.65,          # Z offset below pick point (mm)
-        'pick_extrude_amount': 5.0,      # Extrusion during pick (mm)
-        'pick_extrude_feedrate': 200,    # Feedrate during pick extrusion (mm/min)
-        'pick_cool_temp': 50,            # Cool lower for printed inserts (°C)
-
-        # Place parameters
-        'place_z_offset': -1.4,         # Final Z offset below place point (mm)
-        'place_heat_temp': 230,          # Heat to print/release temperature (°C)
-        'wipe_temp': 210,                # Heat to wipe temperature (°C) before wiping
-        'place_preheat_height': 0.25,    # Height above place point to pre-heat (mm)
-        'place_dwell_time': 1000,        # Dwell time after placement (ms)
-        'place_side_offset': 3.0,        # X offset to move aside after placement (mm)
-
-        # Movement feedrates
-        'travel_feedrate': 6000,         # XY travel speed (mm/min)
-        'z_lift_feedrate': 1000,         # Z lift speed (mm/min)
-        'place_feedrate': 50,           # Z approach speed for placement (mm/min)
-        'post_place_lift_feedrate': 50,  # extremely slow lift after placing
-    },
-    'tamping': {
-        # Tamping parameters by type (TampingType enum: 0=End, 1=TraceTrace, 2=TracePlug, 3=TracePCB)
-        0: {  # End
-            'depth_offset': 0.6,         # Depth below tamp position (mm)
-            'feedrate': 300,             # Z approach speed (mm/min)
-            'dwell_time': 250,           # Dwell time at tamp position (ms)
-        },
-        1: {  # TraceTrace
-            'depth_offset': 1.8,         # Depth below tamp position (mm)
-            'feedrate': 200,             # Z approach speed (mm/min)
-            'dwell_time': 500,           # Dwell time at tamp position (ms)
-        },
-        2: {  # TracePlug
-            'depth_offset': 2.8,         # Depth below tamp position (mm)
-            'feedrate': 200,             # Z approach speed (mm/min)
-            'dwell_time': 500,          # Dwell time at tamp position (ms)
-        },
-        3: {  # TracePCB
-            'depth_offset': 2.3,         # Depth below tamp position (mm)
-            'feedrate': 200,             # Z approach speed (mm/min)
-            'dwell_time': 500,           # Dwell time at tamp position (ms)
-        },
-        'travel_feedrate': 3000,         # XY travel speed to tamping points (mm/min)
-        'lift_feedrate': 1000,           # Z lift speed after tamping (mm/min)
-        'lift_height': 2.0,              # Height to lift after tamping (mm)
-    }
-}
 
 def _jsonable(value):
     if value is None or isinstance(value, (bool, int, float, str)):
@@ -640,8 +322,8 @@ def _outside_env():
 
 
 def process_print():
-    """Main processing function for pick-and-place printing."""
-    global SLICER_PATH, MODULE_PATH
+    """Export the housing and the spec, then run the outside pipeline."""
+    global MODULE_PATH
 
     project_dir = resolve_project_root(globals().get("path"))
     if not project_dir:
@@ -650,57 +332,23 @@ def process_print():
     if MODULE_PATH not in sys.path:
         sys.path.append(MODULE_PATH)
 
-    import gcode_writer
-    import importlib
-    importlib.reload(gcode_writer)
-    from gcode_writer import GcodeWriter
-
     use_trace_braid = bool(globals().get("braid", True))
+    printer_name = str(globals().get("printer", "") or "").strip().lower()
+    if printer_name in ("", "none"):
+        printer_name = "snapmaker u1"
+        print("Printer input was empty. Using snapmaker u1.")
 
-    # --- 1. DIRECTORY & PATH MANAGEMENT ---
-    printer_name = str(globals().get("printer", "")).strip().lower()
-    use_orca = _is_u1(printer_name)
-
-    SLICER_PATH = resolve_orca(project_dir)
-    if not SLICER_PATH:
+    slicer_path = resolve_orca(project_dir)
+    if not slicer_path:
         return
 
     print("Project folder: " + project_dir)
-    print("OrcaSlicer: " + SLICER_PATH)
-    
-    # Determine file prefix, wipe location, and retraction amount based on printer type
-    if use_orca:
-        file_prefix = "U1_"
-        wipe_location = U1_WIPE_LOCATION
-        retract_amount = 0.8
-    elif printer_name == "prusa xl" or printer_name == "xl":
-        file_prefix = "XL_"
-        wipe_location = XL_WIPE_LOCATION
-        retract_amount = 0.7
-    elif printer_name == "prusa mini" or printer_name == "mini":
-        file_prefix = "MINI_"
-        wipe_location = MINI_WIPE_LOCATION
-        retract_amount = 0
-    else:
-        file_prefix = ""
-        wipe_location = XL_WIPE_LOCATION
-        retract_amount = 0.5
-    
-    output_dir = os.path.join(project_dir, "output")
-    snippet_dir = os.path.join(project_dir, "resources", "gcode_snippets")
+    print("OrcaSlicer: " + slicer_path)
 
-    # Clean and recreate the output folder
+    output_dir = os.path.join(project_dir, "output")
     if os.path.exists(output_dir):
         shutil.rmtree(output_dir)
     os.makedirs(output_dir)
-
-    # Define all file paths
-    tray_3mf_path = os.path.join(output_dir, "tray.3mf")
-    model_3mf_path = os.path.join(output_dir, "model.3mf")
-    setup_gcode_path = os.path.join(output_dir, "setup.gcode")
-    part_gcode_path = os.path.join(output_dir, "part.gcode")
-    config_path = os.path.join(project_dir, "resources", f"{file_prefix}config.ini")
-    final_output_path = os.path.join(output_dir, "combined_output.gcode")
 
     # --- 2. 3MF EXPORT STAGE ---
     def _geometry_to_meshes(geo):
@@ -774,20 +422,6 @@ def process_print():
                 result.extend(_geometry_to_meshes(item))
             return result
         return [item for item in meshes if item is not None and item.IsValid and item.Vertices.Count > 0]
-
-    def export_mesh_to_3mf(mesh_data, file_path):
-        """Export a single mesh to 3MF format."""
-        meshes = _meshes_from_value(mesh_data)
-        if not meshes:
-            return False
-        doc = Rhino.RhinoDoc.CreateHeadless(None)
-        opts = Rhino.FileIO.File3mfWriteOptions()
-        opts.Title = "Grasshopper Export"
-        for mesh in meshes:
-            doc.Objects.AddMesh(mesh)
-        success = doc.Export(file_path, opts.ToDictionary())
-        doc.Dispose()
-        return success
 
     def export_meshes_to_3mf(mesh_list, file_path):
         """Export a list of meshes to a single 3MF file."""

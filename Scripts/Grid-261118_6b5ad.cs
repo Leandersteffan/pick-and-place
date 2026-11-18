@@ -1,4 +1,4 @@
-namespace ScriptParasite.Component261114_6b5ad;
+namespace ScriptParasite.Component261118_6b5ad;
 
 // Grid points over the whole print bed.
 // The window switch shows or hides them. One point cloud, so the switch is immediate.

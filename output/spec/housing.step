@@ -11,11 +11,11 @@ FILE_DESCRIPTION(
 
 FILE_NAME(
 /* name */ 'housing',
-/* time_stamp */ '2026-11-14T18:24:16+01:00',
+/* time_stamp */ '2026-11-18T08:12:32+01:00',
 /* author */ (''),
 /* organization */ (''),
 /* preprocessor_version */ 'ST-DEVELOPER v19.2',
-/* originating_system */ 'Rhino 8.36',
+/* originating_system */ 'Rhino 8.37',
 /* authorisation */ '');
 
 FILE_SCHEMA (('CONFIG_CONTROL_DESIGN'));

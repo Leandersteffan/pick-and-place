@@ -1,10 +1,43 @@
 # Pick and place
 
-Print an object that is already assembled. The printer pauses, picks up a trace or a component, and places it into the housing while the part is still being printed.
+The printer builds an object that is already assembled. It prints a housing, pauses, picks up a trace or a component, and places it into the housing while the part is still being printed.
 
-## Look at a print
+Rhino is where you design. Pressing Slice writes one printer file. The tray and the slicing happen in Python, outside Grasshopper.
 
-`web/` is a local page for a finished print. It shows the housing, the tray, and the toolpath from `combined_output.gcode`.
+## Set up this computer
+
+You need Rhino 8 with Grasshopper, Python 3, and [OrcaSlicer](https://github.com/SoftFever/OrcaSlicer).
+
+Install the tray library for that Python:
+
+```text
+python -m pip install manifold3d
+```
+
+Copy `machine.example.json` to `machine.json` in this folder, next to `Scripts`. Fill in the four lines:
+
+| Line | What to put |
+| --- | --- |
+| `platform` | `windows` on Windows, `mac` on a Mac. It has to match this computer. |
+| `python` | The Python program, the one that has `manifold3d`. |
+| `orca` | The OrcaSlicer program. |
+| `orca_machine` | Orca's Snapmaker U1 machine profile, the file that came with Orca. |
+
+`machine.json` stays on your computer. It is not part of the git history. The three paths have to be files that exist. Nothing searches the install folders for you.
+
+## Slice
+
+Open `Designer export life.gh`.
+
+The housing has to be one closed solid on the layer `Default`. A box left on `Traces` makes Slice clear `output/` and stop. Parts you place, and the traces, stay off `Default`.
+
+Press Slice. The printer file is `output/combined_output.gcode`.
+
+The printer name defaults to `snapmaker u1` when that input is empty. That is the printer this project is set up for.
+
+## Look at a finished print
+
+`web/` is a local page for a printer file that already exists. It shows the housing, the tray, and the toolpath.
 
 ```text
 cd web/app
@@ -12,39 +45,21 @@ npm install
 npm run dev
 ```
 
-Open http://127.0.0.1:5173 and press **Load demo**. The demo is `web/fixtures/demo-v1/`, the same files as in `output/`.
+Open http://127.0.0.1:5173 and press **Load demo**.
 
-Slicing again from that page needs the local server, in a second terminal:
+Slicing again from that page needs a second terminal:
 
 ```text
 cd web/server
 py -3 -m uvicorn pnp_server.app:app --host 127.0.0.1 --port 8765
 ```
 
-Without that server the page still shows the print. Regenerate stays off.
+Without that server the page still shows the print.
 
-## Design and slice
+## Where the rest of the detail is
 
-Open `Designer export life.gh` and press Slice. Rhino holds the design. `Scripts/pipeline` builds the tray and writes `output/combined_output.gcode`.
-
-The description of that print is `output/spec/spec.json`. The schema for it is [`web/schema/spec.v1.schema.json`](web/schema/spec.v1.schema.json).
-
-More detail is in [docs/PROJECT.md](docs/PROJECT.md).
-
-## Layout
-
-| Path | What it is |
-| --- | --- |
-| `web/` | The page that shows a print |
-| `output/` | The last slice, including the combined gcode and the spec |
-| `Scripts/pipeline/` | Builds the tray, slices, and writes the printer file |
-| `Designer export life.gh` | The Grasshopper file to open |
-| `resources/` | Printer profiles and components |
-
-## To run a slice
-
-Rhino with Grasshopper, Python 3 with `manifold3d` (`py -3 -m pip install manifold3d`), and [OrcaSlicer](https://github.com/SoftFever/OrcaSlicer). The Python and Orca paths are in `machine.json`.
+[docs/PROJECT.md](docs/PROJECT.md) is the full description: the tray, the temperatures, the spec, and the files. This page is only the setup.
 
 ## Credit
 
-The designer is Oliver's. The first printed part, tag `v1`, was built entirely in Grasshopper. The tray and the printer file now live in Python, and the page in `web/` is the next step toward running this outside Rhino. HCI seminar at HPI.
+The designer is Oliver's. The first printed part, tag `v1`, was built entirely in Grasshopper. The tray and the printer file now live in Python. HCI seminar at HPI.
