@@ -172,6 +172,10 @@ Also leave alone:
 - The Rhino model. Do not rebuild it and do not auto-layout the canvas.
 - A locked `combined_output.gcode` (open in Orca) can make Slice fail while it clears `output/`.
 
+## The first plugin window
+
+`plugin/print_in_place.py` is a Rhino 8 script, not an installed plugin. In Rhino, run `ScriptEditor`, open that file, and press Run. The window creates the layers and builds in the active document. Make housing adds a 20 by 12 by 3 mm box on `Default`. Draw housing uses Rhino's box command. Trace lines and vias go on `Traces`. Only point snap stays on. Grid snap, center, end, midpoint, near, knot, quadrant, and intersection stay off. Ortho is on only while a trace or a housing box is being clicked. Height mm places the grid dots. It does not move the drawing plane. The bottom of an imported part sits at Z=0, centered on the housing. Points on the component's Part layer are the contact points, drawn in red. Draw trace is the same as `Scripts/draw_trace.py`: it switches to the Traces layer, turns ortho on, and runs Rhino's line command. Slice writes `output/spec/spec.json` from that drawing and runs the same pipeline command as the Grasshopper button. It does not send a print. Trace width is 2.8 mm, trace height and layer height are 0.2 mm, and the pause layer is round(Z / 0.2) + 1.
+
 ## What is not done
 
 Oliver opened the project on a Mac on 17 Nov 2026 and the slice ran. He had not installed the Human UI build for Mac, so the movable window did not appear. In the ghx the printer pin is no longer fed by that window. An empty printer name becomes `snapmaker u1`. A `machine.json` whose `platform` is `mac` is rejected on this Windows machine, which is the check that exists here.

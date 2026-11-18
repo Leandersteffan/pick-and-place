@@ -56,6 +56,10 @@ py -3 -m uvicorn pnp_server.app:app --host 127.0.0.1 --port 8765
 
 Without that server the page still shows the print.
 
+## A first window, not a slice
+
+`plugin/print_in_place.py` is the Rhino builder. In Rhino 8, run `ScriptEditor`, open that file, and press Run. It makes the housing, traces, vias, and parts at the size stored in the component files. Slice writes the spec from that drawing and runs the pipeline. It does not send a print, and it is not installed. Grasshopper stays closed.
+
 ## Where the rest of the detail is
 
 [docs/PROJECT.md](docs/PROJECT.md) is the full description: the tray, the temperatures, the spec, and the files. This page is only the setup.
