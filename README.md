@@ -56,9 +56,13 @@ py -3 -m uvicorn pnp_server.app:app --host 127.0.0.1 --port 8765
 
 Without that server the page still shows the print.
 
-## A first window, not a slice
+## The Rhino window
 
-`plugin/print_in_place.py` is the Rhino builder. In Rhino 8, run `ScriptEditor`, open that file, and press Run. It makes the housing, traces, vias, and parts at the size stored in the component files. Slice writes the spec from that drawing and runs the pipeline. It does not send a print, and it is not installed. Grasshopper stays closed.
+Open `plugin/print_in_place.py`. That file is the window. In Rhino 8, run `ScriptEditor`, open it, and press Run. Grasshopper stays closed. It is not an installed package, and it does not use the old Human UI window.
+
+The window builds a housing, cloth traces, and a part such as the sequin. Slice writes `output/combined_output.gcode`. It cuts the trace grooves and the Subtract solids out of the housing, then runs the same pipeline as the Grasshopper button. It does not send a print. This path is in good shape for that part. The printer is the Snapmaker U1.
+
+You still need `machine.json`, filled in above. On a Mac, `platform` is `mac`, and the three paths are the files on that Mac.
 
 ## Where the rest of the detail is
 

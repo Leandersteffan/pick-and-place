@@ -9,6 +9,7 @@
 
 import importlib
 import json
+import math
 import os
 import shutil
 import subprocess
@@ -766,6 +767,98 @@ def curve_ends(curve):
     return None
 
 
+def enlarge_cutter(brep):
+    """Grasshopper scales the cutters by 1.001 so the boolean opens a real pocket."""
+    box = brep.GetBoundingBox(True)
+    copy = brep.DuplicateBrep()
+    copy.Transform(geometry.Transform.Scale(box.Center, 1.001))
+    return copy
+
+
+def trace_cutter_brep(record):
+    start = record["line_from"]
+    end = record["line_to"]
+    width = float(record["width"])
+    height = float(record["height"])
+    ax, ay, az = float(start["x"]), float(start["y"]), float(start["z"])
+    bx, by = float(end["x"]), float(end["y"])
+    dx = bx - ax
+    dy = by - ay
+    length = math.hypot(dx, dy)
+    if length < 1e-6:
+        return None
+    side_x = -dy / length * width / 2.0
+    side_y = dx / length * width / 2.0
+    corners = [
+        geometry.Point3d(ax + side_x, ay + side_y, az),
+        geometry.Point3d(ax - side_x, ay - side_y, az),
+        geometry.Point3d(bx - side_x, by - side_y, az),
+        geometry.Point3d(bx + side_x, by + side_y, az),
+        geometry.Point3d(ax + side_x, ay + side_y, az),
+    ]
+    curve = geometry.Polyline(corners).ToNurbsCurve()
+    extrusion = geometry.Extrusion.Create(curve, -height, True)
+    if extrusion is None:
+        return None
+    brep = extrusion.ToBrep()
+    if brep is None or not brep.IsSolid:
+        return None
+    return brep
+
+
+def solid_volume(brep):
+    try:
+        result = brep.GetVolume()
+    except Exception:
+        return None
+    if isinstance(result, tuple):
+        return float(result[-1])
+    try:
+        return float(result)
+    except Exception:
+        return None
+
+
+def cut_pockets(housing, cutters):
+    """Housing minus trace grooves minus the Subtract-layer solids. Same difference Grasshopper sliced."""
+    if not cutters:
+        raise RuntimeError("There is nothing to cut out of the housing.")
+    current = housing
+    before = solid_volume(housing)
+    for cutter in cutters:
+        opened = enlarge_cutter(cutter)
+        result = geometry.Brep.CreateBooleanDifference(current, opened, 0.001)
+        pieces = [item for item in list(result or []) if item is not None and item.IsSolid]
+        if not pieces:
+            raise RuntimeError("A pocket could not be cut from the housing. The housing has to cover the part and the traces.")
+        current = max(pieces, key=lambda item: item.GetBoundingBox(True).Volume)
+    after = solid_volume(current)
+    if before is not None and after is not None and after >= before - 0.01:
+        raise RuntimeError("The housing was not reduced. The pockets were not cut.")
+    return current
+
+
+def pocket_cutters(doc, parts):
+    cutters = []
+    for record in parts:
+        if record["type"] != "trace_cloth":
+            continue
+        cutter = trace_cutter_brep(record)
+        if cutter is None:
+            raise RuntimeError("A trace groove could not be built.")
+        cutters.append(cutter)
+    subtractors = [
+        as_brep(obj.Geometry)
+        for obj in objects_on_layer(doc, "Subtract")
+        if classify(obj) == "closed solid"
+    ]
+    subtractors = [item for item in subtractors if item is not None]
+    if not subtractors:
+        raise RuntimeError("The part has no closed solid on the Subtract layer, so its pocket cannot be cut.")
+    cutters.extend(subtractors)
+    return cutters
+
+
 def housing_brep(doc):
     solids = [obj for obj in objects_on_layer(doc, "Default") if classify(obj) == "closed solid"]
     if len(solids) != 1:
@@ -905,7 +998,6 @@ def gather_job(doc):
     machine = machine_config.load_machine(root)
     python_path = machine_config.tool_path(machine, "python")
     machine_config.tool_path(machine, "orca")
-    housing = housing_brep(doc)
     contacts, traces, components = collect_model(doc)
     builder = load_spec_build()
     boxes = [(kind, box) for kind, _brep, box in components]
@@ -914,6 +1006,7 @@ def gather_job(doc):
         raise RuntimeError(errors[0])
     if not parts:
         raise RuntimeError("Draw a trace or place a part before slicing.")
+    housing = cut_pockets(housing_brep(doc), pocket_cutters(doc, parts))
     trace_count = sum(1 for item in parts if item["type"] == "trace_cloth")
     component_count = len(parts) - trace_count
     return {
@@ -1080,7 +1173,7 @@ def show_window():
             status.Text = report(doc)
 
         schedule(work)
-        return "Slicing {0} traces and {1} components. Rhino waits until Orca finishes.".format(
+        return "Slicing {0} traces and {1} components. The pockets are cut out of the housing first. Rhino waits until Orca finishes.".format(
             job["trace_count"], job["component_count"]
         )
 
